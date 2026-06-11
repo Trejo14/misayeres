@@ -39,8 +39,8 @@ export default function AdminLayout() {
               {item.label}
             </Link>
           ))}
-          <a href="#" onClick={handleLogout} style={{ marginTop: '16px', color: 'var(--text-light)', borderTop: '1px solid var(--border)', paddingTop: '16px', marginTop: '16px' }}>
-            <span className="nav-icon">xx</span>
+          <a href="#" onClick={handleLogout} style={{ marginTop: 'auto', color: 'var(--text-light)', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+            <span className="nav-icon">--</span>
             Cerrar Sesion
           </a>
         </nav>
