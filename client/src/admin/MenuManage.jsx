@@ -45,7 +45,7 @@ export default function MenuManage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar este platillo?')) return;
+    if (!confirm('Eliminar este platillo?')) return;
     try {
       await axios.delete(`/api/menu/${id}`);
       loadItems();
@@ -57,7 +57,7 @@ export default function MenuManage() {
   return (
     <div>
       <div className="admin-header">
-        <h1>Gestión de Menú</h1>
+        <h1>Gestion de Menu</h1>
         <button className="btn btn-primary" onClick={openCreate}>+ Nuevo Platillo</button>
       </div>
 
@@ -66,7 +66,7 @@ export default function MenuManage() {
           <thead>
             <tr>
               <th>Nombre</th>
-              <th>Categoría</th>
+              <th>Categoria</th>
               <th>Precio</th>
               <th>Disponible</th>
               <th>Acciones</th>
@@ -80,7 +80,7 @@ export default function MenuManage() {
                 <td>${parseFloat(item.precio).toFixed(2)}</td>
                 <td>
                   <span className={`badge ${item.disponible ? 'badge-confirmada' : 'badge-cancelada'}`}>
-                    {item.disponible ? 'Sí' : 'No'}
+                    {item.disponible ? 'Si' : 'No'}
                   </span>
                 </td>
                 <td>
@@ -88,7 +88,7 @@ export default function MenuManage() {
                     Editar
                   </button>
                   <button className="btn btn-sm" onClick={() => handleDelete(item.id)}
-                    style={{ background: '#dc3545', color: 'white', border: 'none' }}>
+                    style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
                     Eliminar
                   </button>
                 </td>
@@ -109,20 +109,20 @@ export default function MenuManage() {
             <h2>{editing ? 'Editar Platillo' : 'Nuevo Platillo'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Nombre *</label>
+                <label>Nombre</label>
                 <input value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} required />
               </div>
               <div className="form-group">
-                <label>Descripción</label>
+                <label>Descripcion</label>
                 <textarea rows="3" value={form.descripcion} onChange={e => setForm({ ...form, descripcion: e.target.value })} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div className="form-group">
-                  <label>Precio *</label>
+                  <label>Precio</label>
                   <input type="number" step="0.01" value={form.precio} onChange={e => setForm({ ...form, precio: e.target.value })} required />
                 </div>
                 <div className="form-group">
-                  <label>Categoría *</label>
+                  <label>Categoria</label>
                   <select value={form.categoria} onChange={e => setForm({ ...form, categoria: e.target.value })}>
                     {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                   </select>

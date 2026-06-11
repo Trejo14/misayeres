@@ -19,12 +19,12 @@ export default function ContactMessages() {
       await axios.put(`/api/contact/${id}/leer`);
       loadMessages();
     } catch {
-      alert('Error al marcar como leído');
+      alert('Error al marcar como leido');
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar este mensaje?')) return;
+    if (!confirm('Eliminar este mensaje?')) return;
     try {
       await axios.delete(`/api/contact/${id}`);
       loadMessages();
@@ -34,7 +34,7 @@ export default function ContactMessages() {
   };
 
   if (user?.rol !== 'dueno') {
-    return <p style={{ color: 'var(--text-light)' }}>Solo el dueño puede ver mensajes.</p>;
+    return <p style={{ color: 'var(--text-light)' }}>Solo el dueno puede ver mensajes.</p>;
   }
 
   return (
@@ -57,26 +57,26 @@ export default function ContactMessages() {
           </thead>
           <tbody>
             {messages.map(m => (
-              <tr key={m.id} style={m.leido ? {} : { background: '#f0f7ff' }}>
+              <tr key={m.id} style={m.leido ? {} : { background: '#fafafa' }}>
                 <td>{m.nombre}</td>
                 <td>{m.email}</td>
                 <td style={{ maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {m.mensaje}
                 </td>
-                <td>{m.created_at}</td>
+                <td style={{ color: 'var(--text-light)', fontSize: '13px' }}>{m.created_at}</td>
                 <td>
                   <span className={`badge ${m.leido ? 'badge-completada' : 'badge-pendiente'}`}>
-                    {m.leido ? 'Leído' : 'Nuevo'}
+                    {m.leido ? 'Leido' : 'Nuevo'}
                   </span>
                 </td>
                 <td>
                   {!m.leido && (
                     <button className="btn btn-sm btn-outline" onClick={() => markAsRead(m.id)} style={{ marginRight: '8px' }}>
-                      Marcar leído
+                      Marcar leido
                     </button>
                   )}
                   <button className="btn btn-sm" onClick={() => handleDelete(m.id)}
-                    style={{ background: '#dc3545', color: 'white', border: 'none' }}>
+                    style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
                     Eliminar
                   </button>
                 </td>

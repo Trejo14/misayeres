@@ -33,12 +33,13 @@ export default function Reservations() {
     <section style={{ padding: '60px 0' }}>
       <div className="container" style={{ maxWidth: '700px' }}>
         <h2 className="section-title">Reservaciones</h2>
-        <p className="section-subtitle">Reserva tu mesa y disfruta de una experiencia única</p>
+        <div className="divider" />
+        <p className="section-subtitle">Reserve su mesa y disfrute de una experiencia gastronomica unica.</p>
 
         <div className="admin-card">
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Nombre Completo *</label>
+              <label>Nombre Completo</label>
               <input
                 type="text"
                 name="nombre_cliente"
@@ -50,7 +51,7 @@ export default function Reservations() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div className="form-group">
-                <label>Teléfono *</label>
+                <label>Telefono</label>
                 <input
                   type="tel"
                   name="telefono"
@@ -72,7 +73,7 @@ export default function Reservations() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
               <div className="form-group">
-                <label>Fecha *</label>
+                <label>Fecha</label>
                 <input
                   type="date"
                   name="fecha"
@@ -83,7 +84,7 @@ export default function Reservations() {
                 />
               </div>
               <div className="form-group">
-                <label>Hora *</label>
+                <label>Hora</label>
                 <input
                   type="time"
                   name="hora"
@@ -93,7 +94,7 @@ export default function Reservations() {
                 />
               </div>
               <div className="form-group">
-                <label>Personas *</label>
+                <label>Personas</label>
                 <input
                   type="number"
                   name="personas"
@@ -118,17 +119,17 @@ export default function Reservations() {
             </div>
 
             <button type="submit" className="btn btn-primary" disabled={status === 'enviando'}>
-              {status === 'enviando' ? 'Reservando...' : 'Reservar Mesa'}
+              {status === 'enviando' ? 'Procesando...' : 'Reservar Mesa'}
             </button>
 
             {status === 'exito' && (
-              <p style={{ color: '#155724', marginTop: '12px', fontWeight: 500 }}>
-                ¡Reserva creada con éxito! Te contactaremos para confirmar.
+              <p style={{ color: 'var(--text)', fontSize: '14px', marginTop: '12px' }}>
+                Reserva creada con exito. Le contactaremos para confirmar.
               </p>
             )}
             {status === 'error' && (
-              <p style={{ color: '#721c24', marginTop: '12px' }}>
-                Error al crear la reserva. Intenta de nuevo.
+              <p style={{ color: 'var(--text-light)', fontSize: '14px', marginTop: '12px' }}>
+                Error al crear la reserva. Intente de nuevo.
               </p>
             )}
           </form>

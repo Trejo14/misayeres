@@ -24,7 +24,7 @@ export default function ReservationsManage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar esta reserva?')) return;
+    if (!confirm('Eliminar esta reserva?')) return;
     try {
       await axios.delete(`/api/reservations/${id}`);
       loadItems();
@@ -37,6 +37,7 @@ export default function ReservationsManage() {
     <div>
       <div className="admin-header">
         <h1>Reservaciones</h1>
+        <span style={{ color: 'var(--text-light)', fontSize: '14px' }}>{items.length} reservas</span>
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'auto' }}>
@@ -44,7 +45,7 @@ export default function ReservationsManage() {
           <thead>
             <tr>
               <th>Cliente</th>
-              <th>Teléfono</th>
+              <th>Telefono</th>
               <th>Fecha</th>
               <th>Hora</th>
               <th>Personas</th>
@@ -67,12 +68,12 @@ export default function ReservationsManage() {
                   <select
                     value={item.estado}
                     onChange={e => handleStatus(item.id, e.target.value)}
-                    style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ddd', marginRight: '8px' }}
+                    style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border)', marginRight: '8px', fontSize: '13px', background: 'white' }}
                   >
                     {ESTADOS.map(e => <option key={e}>{e}</option>)}
                   </select>
                   <button className="btn btn-sm" onClick={() => handleDelete(item.id)}
-                    style={{ background: '#dc3545', color: 'white', border: 'none' }}>
+                    style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
                     Eliminar
                   </button>
                 </td>

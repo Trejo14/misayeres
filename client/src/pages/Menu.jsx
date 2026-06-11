@@ -20,12 +20,13 @@ export default function Menu() {
   return (
     <section style={{ padding: '60px 0' }}>
       <div className="container">
-        <h2 className="section-title">Nuestro Menú</h2>
-        <p className="section-subtitle">Explora nuestra selección de platillos</p>
+        <h2 className="section-title">Nuestro Menu</h2>
+        <div className="divider" />
+        <p className="section-subtitle">Explore nuestra seleccion de platillos preparados con los ingredientes mas frescos.</p>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '40px' }}>
           <button
-            className={`btn btn-sm ${!category ? 'btn-primary' : 'btn-outline'}`}
+            className={`category-btn ${!category ? 'active' : ''}`}
             onClick={() => setCategory('')}
           >
             Todos
@@ -33,7 +34,7 @@ export default function Menu() {
           {CATEGORIES.map(cat => (
             <button
               key={cat}
-              className={`btn btn-sm ${category === cat ? 'btn-primary' : 'btn-outline'}`}
+              className={`category-btn ${category === cat ? 'active' : ''}`}
               onClick={() => setCategory(cat)}
             >
               {cat}
@@ -42,31 +43,34 @@ export default function Menu() {
         </div>
 
         {loading ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-light)' }}>Cargando menú...</p>
+          <p style={{ textAlign: 'center', color: 'var(--text-light)' }}>Cargando menu ...</p>
         ) : items.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-light)' }}>No hay platillos disponibles en esta categoría.</p>
+          <p style={{ textAlign: 'center', color: 'var(--text-light)' }}>No hay platillos disponibles en esta categoria.</p>
         ) : (
           <div className="menu-grid">
             {items.map(item => (
               <div key={item.id} className="card">
                 <div style={{
                   height: '200px',
-                  background: item.imagen ? `url(${item.imagen}) center/cover` : `linear-gradient(135deg, var(--primary), var(--accent))`,
+                  background: `linear-gradient(135deg, var(--bg-alt), var(--border))`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  color: 'var(--text-lightest)',
+                  fontSize: '28px',
+                  letterSpacing: '4px',
                 }}>
-                  {!item.imagen && <span style={{ color: 'white', fontSize: '3rem' }}>🍽️</span>}
+                  {item.categoria.toUpperCase()}
                 </div>
                 <div className="card-body">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <h3>{item.nombre}</h3>
-                    <span style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.2rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <h3 style={{ fontSize: '1.1rem' }}>{item.nombre}</h3>
+                    <span style={{ color: 'var(--text)', fontWeight: 600, fontSize: '1.1rem', whiteSpace: 'nowrap', marginLeft: '16px' }}>
                       ${parseFloat(item.precio).toFixed(2)}
                     </span>
                   </div>
-                  <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '8px' }}>{item.descripcion}</p>
-                  <span className="badge badge-confirmada" style={{ background: '#e8f4f8', color: '#2c7be5' }}>
+                  <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '12px', lineHeight: '1.7' }}>{item.descripcion}</p>
+                  <span style={{ fontSize: '12px', color: 'var(--text-lightest)', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
                     {item.categoria}
                   </span>
                 </div>

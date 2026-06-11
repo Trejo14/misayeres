@@ -21,26 +21,27 @@ export default function Contact() {
     <section style={{ padding: '60px 0' }}>
       <div className="container" style={{ maxWidth: '800px' }}>
         <h2 className="section-title">Contacto</h2>
-        <p className="section-subtitle">Estamos aquí para atenderte</p>
+        <div className="divider" />
+        <p className="section-subtitle">Estamos aqui para atenderle. No dude en escribirnos.</p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '40px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', marginBottom: '40px' }}>
           <div>
-            <div style={{ marginBottom: '24px' }}>
-              <h3 style={{ marginBottom: '8px' }}>📍 Dirección</h3>
-              <p style={{ color: 'var(--text-light)' }}>Calle Principal #123, Ciudad</p>
+            <div style={{ marginBottom: '32px' }}>
+              <h3 style={{ marginBottom: '8px', fontSize: '1.1rem' }}>Direccion</h3>
+              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Calle Principal #123, Ciudad</p>
             </div>
-            <div style={{ marginBottom: '24px' }}>
-              <h3 style={{ marginBottom: '8px' }}>📞 Teléfono</h3>
-              <p style={{ color: 'var(--text-light)' }}>(123) 456-7890</p>
+            <div style={{ marginBottom: '32px' }}>
+              <h3 style={{ marginBottom: '8px', fontSize: '1.1rem' }}>Telefono</h3>
+              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>(123) 456-7890</p>
             </div>
-            <div style={{ marginBottom: '24px' }}>
-              <h3 style={{ marginBottom: '8px' }}>✉️ Email</h3>
-              <p style={{ color: 'var(--text-light)' }}>info@misayeres.com</p>
+            <div style={{ marginBottom: '32px' }}>
+              <h3 style={{ marginBottom: '8px', fontSize: '1.1rem' }}>Email</h3>
+              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>info@misayeres.com</p>
             </div>
           </div>
 
           <div>
-            <h3 style={{ marginBottom: '20px' }}>Envíanos un mensaje</h3>
+            <h3 style={{ marginBottom: '20px', fontSize: '1rem' }}>Envie su mensaje</h3>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Nombre</label>
@@ -73,10 +74,10 @@ export default function Contact() {
                 {status === 'enviando' ? 'Enviando...' : 'Enviar Mensaje'}
               </button>
               {status === 'exito' && (
-                <p style={{ color: '#155724', marginTop: '12px' }}>Mensaje enviado con éxito.</p>
+                <p style={{ color: 'var(--text)', fontSize: '14px', marginTop: '12px' }}>Mensaje enviado con exito.</p>
               )}
               {status === 'error' && (
-                <p style={{ color: '#721c24', marginTop: '12px' }}>Error al enviar. Intenta de nuevo.</p>
+                <p style={{ color: 'var(--text-light)', fontSize: '14px', marginTop: '12px' }}>Error al enviar. Intente de nuevo.</p>
               )}
             </form>
           </div>

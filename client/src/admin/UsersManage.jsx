@@ -49,7 +49,7 @@ export default function UsersManage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar este usuario?')) return;
+    if (!confirm('Eliminar este usuario?')) return;
     try {
       await axios.delete(`/api/users/${id}`);
       loadUsers();
@@ -59,13 +59,13 @@ export default function UsersManage() {
   };
 
   if (user?.rol !== 'dueno') {
-    return <p style={{ color: 'var(--text-light)' }}>Solo el dueño puede gestionar usuarios.</p>;
+    return <p style={{ color: 'var(--text-light)' }}>Solo el dueno puede gestionar usuarios.</p>;
   }
 
   return (
     <div>
       <div className="admin-header">
-        <h1>Gestión de Usuarios</h1>
+        <h1>Gestion de Usuarios</h1>
         <button className="btn btn-primary" onClick={openCreate}>+ Nuevo Usuario</button>
       </div>
 
@@ -86,14 +86,14 @@ export default function UsersManage() {
                 <td>{u.nombre}</td>
                 <td>{u.email}</td>
                 <td><span className={`badge ${u.rol === 'dueno' ? 'badge-confirmada' : u.rol === 'admin' ? 'badge-pendiente' : 'badge-completada'}`}>{u.rol}</span></td>
-                <td>{u.created_at}</td>
+                <td style={{ color: 'var(--text-light)', fontSize: '13px' }}>{u.created_at}</td>
                 <td>
                   <button className="btn btn-sm btn-outline" onClick={() => openEdit(u)} style={{ marginRight: '8px' }}>
                     Editar
                   </button>
                   {u.rol !== 'dueno' && (
                     <button className="btn btn-sm" onClick={() => handleDelete(u.id)}
-                      style={{ background: '#dc3545', color: 'white', border: 'none' }}>
+                      style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
                       Eliminar
                     </button>
                   )}
@@ -115,20 +115,20 @@ export default function UsersManage() {
             <h2>{editing ? 'Editar Usuario' : 'Nuevo Usuario'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Nombre *</label>
+                <label>Nombre</label>
                 <input value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} required />
               </div>
               <div className="form-group">
-                <label>Email *</label>
+                <label>Email</label>
                 <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} required />
               </div>
               <div className="form-group">
-                <label>{editing ? 'Nueva contraseña (dejar vacío para no cambiar)' : 'Contraseña *'}</label>
+                <label>{editing ? 'Nueva contrasena (dejar vacio para no cambiar)' : 'Contrasena'}</label>
                 <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
                   required={!editing} />
               </div>
               <div className="form-group">
-                <label>Rol *</label>
+                <label>Rol</label>
                 <select value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })}>
                   {ROLES.map(r => <option key={r}>{r}</option>)}
                 </select>

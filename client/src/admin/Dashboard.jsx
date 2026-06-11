@@ -18,32 +18,34 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  if (loading) return <p>Cargando dashboard...</p>;
+  if (loading) return <p style={{ color: 'var(--text-light)' }}>Cargando dashboard...</p>;
 
   const statCards = [
-    { label: 'Platillos', value: stats?.totalPlatillos || '—', icon: '🍽️' },
-    { label: 'Reservas Totales', value: stats?.totalReservas || '—', icon: '📅' },
-    { label: 'Reservas Hoy', value: stats?.reservasHoy || '—', icon: '📌' },
-    { label: 'Empleados', value: stats?.totalEmpleados || '—', icon: '👥' },
-    { label: 'Quejas Totales', value: stats?.totalQuejas || '—', icon: '⚠️' },
-    { label: 'Quejas Abiertas', value: stats?.quejasAbiertas || '—', icon: '🔴' },
-    { label: 'Mensajes', value: stats?.totalContactos || '—', icon: '✉️' },
-    { label: 'No Leídos', value: stats?.contactosNoLeidos || '—', icon: '📬' },
+    { label: 'Platillos', value: stats?.totalPlatillos || '--' },
+    { label: 'Reservas Totales', value: stats?.totalReservas || '--' },
+    { label: 'Reservas Hoy', value: stats?.reservasHoy || '--' },
+    { label: 'Empleados', value: stats?.totalEmpleados || '--' },
+    { label: 'Quejas Totales', value: stats?.totalQuejas || '--' },
+    { label: 'Quejas Abiertas', value: stats?.quejasAbiertas || '--' },
+    { label: 'Mensajes', value: stats?.totalContactos || '--' },
+    { label: 'No Leidos', value: stats?.contactosNoLeidos || '--' },
   ];
 
   return (
     <div>
       <div className="admin-header">
         <h1>Dashboard</h1>
-        <span style={{ color: 'var(--text-light)' }}>Bienvenido, {user?.nombre}</span>
+        <span style={{ color: 'var(--text-light)', fontSize: '14px' }}>{user?.nombre} -- {user?.rol}</span>
       </div>
 
       <div className="stats-grid">
         {statCards.map((card, i) => (
           <div key={i} className="stat-card">
-            <div className="stat-icon">{card.icon}</div>
+            <div className="stat-header">
+              <div className="stat-dot" />
+              <p>{card.label}</p>
+            </div>
             <h3>{card.value}</h3>
-            <p>{card.label}</p>
           </div>
         ))}
       </div>
@@ -51,7 +53,7 @@ export default function Dashboard() {
       {user?.rol === 'dueno' && stats && (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           <div className="admin-card">
-            <h3 style={{ marginBottom: '16px' }}>Quejas por Estado</h3>
+            <h3 style={{ marginBottom: '16px', fontSize: '1rem', fontWeight: 500 }}>Quejas por Estado</h3>
             {stats.quejasPorEstado?.length > 0 ? (
               <table className="admin-table">
                 <thead>
@@ -69,11 +71,11 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
-            ) : <p style={{ color: 'var(--text-light)' }}>Sin datos</p>}
+            ) : <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Sin datos</p>}
           </div>
 
           <div className="admin-card">
-            <h3 style={{ marginBottom: '16px' }}>Quejas por Tipo</h3>
+            <h3 style={{ marginBottom: '16px', fontSize: '1rem', fontWeight: 500 }}>Quejas por Tipo</h3>
             {stats.quejasPorTipo?.length > 0 ? (
               <table className="admin-table">
                 <thead>
@@ -91,17 +93,17 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
-            ) : <p style={{ color: 'var(--text-light)' }}>Sin datos</p>}
+            ) : <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Sin datos</p>}
           </div>
 
           <div className="admin-card" style={{ gridColumn: '1 / -1' }}>
-            <h3 style={{ marginBottom: '16px' }}>Quejas por Empleado</h3>
+            <h3 style={{ marginBottom: '16px', fontSize: '1rem', fontWeight: 500 }}>Quejas por Empleado</h3>
             {stats.quejasPorEmpleado?.length > 0 ? (
               <table className="admin-table">
                 <thead>
                   <tr>
                     <th>Empleado</th>
-                    <th>Total Quejas</th>
+                    <th>Total</th>
                     <th>Abiertas</th>
                   </tr>
                 </thead>
@@ -115,11 +117,11 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
-            ) : <p style={{ color: 'var(--text-light)' }}>Sin datos</p>}
+            ) : <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Sin datos</p>}
           </div>
 
           <div className="admin-card" style={{ gridColumn: '1 / -1' }}>
-            <h3 style={{ marginBottom: '16px' }}>Reservas por Estado</h3>
+            <h3 style={{ marginBottom: '16px', fontSize: '1rem', fontWeight: 500 }}>Reservas por Estado</h3>
             {stats.reservasPorEstado?.length > 0 ? (
               <table className="admin-table">
                 <thead>
@@ -137,7 +139,7 @@ export default function Dashboard() {
                   ))}
                 </tbody>
               </table>
-            ) : <p style={{ color: 'var(--text-light)' }}>Sin datos</p>}
+            ) : <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Sin datos</p>}
           </div>
         </div>
       )}

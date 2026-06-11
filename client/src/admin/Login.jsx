@@ -18,7 +18,7 @@ export default function Login() {
       await login(email, password);
       navigate('/admin');
     } catch {
-      setError('Credenciales inválidas');
+      setError('Credenciales invalidas');
     } finally {
       setLoading(false);
     }
@@ -27,8 +27,8 @@ export default function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <h1>Mis Ayères</h1>
-        <p>Panel de Administración</p>
+        <h1>Mis Ayeres</h1>
+        <p className="login-subtitle">Panel de Administracion</p>
 
         {error && <div className="login-error">{error}</div>}
 
@@ -44,7 +44,7 @@ export default function Login() {
             />
           </div>
           <div className="form-group">
-            <label>Contraseña</label>
+            <label>Contrasena</label>
             <input
               type="password"
               value={password}
@@ -59,15 +59,14 @@ export default function Login() {
             style={{ width: '100%', justifyContent: 'center' }}
             disabled={loading}
           >
-            {loading ? 'Entrando...' : 'Iniciar Sesión'}
+            {loading ? 'Entrando...' : 'Iniciar Sesion'}
           </button>
         </form>
 
-        <div style={{ marginTop: '24px', fontSize: '13px', color: 'var(--text-light)' }}>
-          <p style={{ marginBottom: '4px' }}><strong>Credenciales de prueba:</strong></p>
-          <p>Dueño: dueno@restaurante.com / admin123</p>
-          <p>Admin: admin@restaurante.com / admin123</p>
-          <p>Empleado: empleado1@restaurante.com / empleado123</p>
+        <div style={{ marginTop: '32px', fontSize: '12px', color: 'var(--text-lightest)', textAlign: 'center' }}>
+          <p style={{ marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Credenciales de prueba</p>
+          <p>dueno@restaurante.com / admin123</p>
+          <p>admin@restaurante.com / admin123</p>
         </div>
       </div>
     </div>

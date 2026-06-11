@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
-const TIPOS = ['Atención al cliente', 'Puntualidad', 'Calidad de trabajo', 'Actitud', 'Incumplimiento', 'Otro'];
+const TIPOS = ['Atencion al cliente', 'Puntualidad', 'Calidad de trabajo', 'Actitud', 'Incumplimiento', 'Otro'];
 const ESTADOS = ['abierta', 'investigando', 'resuelta', 'cerrada'];
 
 export default function ComplaintsManage() {
@@ -41,7 +41,7 @@ export default function ComplaintsManage() {
   };
 
   if (user?.rol !== 'dueno') {
-    return <p style={{ color: 'var(--text-light)' }}>Solo el dueño puede gestionar quejas.</p>;
+    return <p style={{ color: 'var(--text-light)' }}>Solo el dueno puede gestionar quejas.</p>;
   }
 
   return (
@@ -58,10 +58,10 @@ export default function ComplaintsManage() {
               <th>Empleado</th>
               <th>Reportado por</th>
               <th>Tipo</th>
-              <th>Descripción</th>
+              <th>Descripcion</th>
               <th>Estado</th>
               <th>Fecha</th>
-              <th>Acción</th>
+              <th>Accion</th>
             </tr>
           </thead>
           <tbody>
@@ -74,12 +74,12 @@ export default function ComplaintsManage() {
                   {c.descripcion}
                 </td>
                 <td><span className={`badge badge-${c.estado}`}>{c.estado}</span></td>
-                <td>{c.created_at}</td>
+                <td style={{ color: 'var(--text-light)', fontSize: '13px' }}>{c.created_at}</td>
                 <td>
                   <select
                     value={c.estado}
                     onChange={e => handleStatus(c.id, e.target.value)}
-                    style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ddd' }}
+                    style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid var(--border)', fontSize: '13px', background: 'white' }}
                   >
                     {ESTADOS.map(e => <option key={e}>{e}</option>)}
                   </select>
@@ -101,7 +101,7 @@ export default function ComplaintsManage() {
             <h2>Nueva Queja</h2>
             <form onSubmit={handleCreate}>
               <div className="form-group">
-                <label>Empleado *</label>
+                <label>Empleado</label>
                 <select value={form.empleado_id} onChange={e => setForm({ ...form, empleado_id: e.target.value })} required>
                   <option value="">Seleccionar empleado</option>
                   {employees.map(e => (
@@ -110,13 +110,13 @@ export default function ComplaintsManage() {
                 </select>
               </div>
               <div className="form-group">
-                <label>Tipo *</label>
+                <label>Tipo</label>
                 <select value={form.tipo} onChange={e => setForm({ ...form, tipo: e.target.value })}>
                   {TIPOS.map(t => <option key={t}>{t}</option>)}
                 </select>
               </div>
               <div className="form-group">
-                <label>Descripción *</label>
+                <label>Descripcion</label>
                 <textarea rows="4" value={form.descripcion} onChange={e => setForm({ ...form, descripcion: e.target.value })} required />
               </div>
               <div className="form-actions">
