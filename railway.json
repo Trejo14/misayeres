@@ -1,5 +1,14 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "watchPatterns": [
+      "server/**/*",
+      "client/**/*",
+      "Dockerfile",
+      "railway.json",
+      "package.json"
+    ]
+  },
   "deploy": {
     "healthcheckPath": "/api/health",
     "restartPolicyType": "ON_FAILURE"
