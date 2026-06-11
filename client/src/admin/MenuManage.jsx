@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CATEGORIES = ['Entradas', 'Platos Fuertes', 'Pastas', 'Pizzas', 'Ensaladas', 'Postres', 'Bebidas'];
+const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena'];
 
 export default function MenuManage() {
   const [items, setItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ nombre: '', descripcion: '', precio: '', categoria: 'Entradas', imagen: '', disponible: 1 });
+  const [form, setForm] = useState({ nombre: '', descripcion: '', precio: '', categoria: 'Desayuno', imagen: '', disponible: 1 });
 
   const loadItems = () => {
     axios.get('/api/menu/all')
@@ -19,7 +19,7 @@ export default function MenuManage() {
 
   const openCreate = () => {
     setEditing(null);
-    setForm({ nombre: '', descripcion: '', precio: '', categoria: 'Entradas', imagen: '', disponible: 1 });
+    setForm({ nombre: '', descripcion: '', precio: '', categoria: 'Desayuno', imagen: '', disponible: 1 });
     setShowModal(true);
   };
 

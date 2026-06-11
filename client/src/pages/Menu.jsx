@@ -1,66 +1,103 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CATEGORIES = ['Entradas', 'Platos Fuertes', 'Pastas', 'Pizzas', 'Ensaladas', 'Postres', 'Bebidas'];
+const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena'];
+const DAY_CATS = ['Desayuno', 'Almuerzo'];
+const NIGHT_CATS = ['Comida', 'Cena'];
+
+const DAY_COLORS = {
+  bg: 'linear-gradient(135deg, #fff8e1, #ffecb3)',
+  headerBg: '#f9a825',
+  headerText: '#ffffff',
+  accent: '#f57f17',
+  cardBorder: '#ffe082',
+  tagBg: '#fff8e1',
+  tagText: '#f57f17',
+  title: '#e65100',
+};
+
+const NIGHT_COLORS = {
+  bg: 'linear-gradient(135deg, #263238, #37474f)',
+  headerBg: '#263238',
+  headerText: '#ffffff',
+  accent: '#78909c',
+  cardBorder: '#455a64',
+  tagBg: '#37474f',
+  tagText: '#b0bec5',
+  title: '#eceff1',
+};
 
 export default function Menu() {
   const [items, setItems] = useState([]);
-  const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    const params = category ? { categoria: category } : {};
-    axios.get('/api/menu', { params })
+    axios.get('/api/menu')
       .then(res => setItems(res.data))
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [category]);
+  }, []);
 
-  return (
-    <section style={{ padding: '60px 0' }}>
-      <div className="container">
-        <h2 className="section-title">Nuestro Menu</h2>
-        <div className="divider" />
-        <p className="section-subtitle">Explore nuestra seleccion de platillos preparados con los ingredientes mas frescos.</p>
-
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '40px' }}>
-          <button
-            className={`category-btn ${!category ? 'active' : ''}`}
-            onClick={() => setCategory('')}
-          >
-            Todos
-          </button>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat}
-              className={`category-btn ${category === cat ? 'active' : ''}`}
-              onClick={() => setCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
+  if (loading) {
+    return (
+      <section style={{ padding: '60px 0' }}>
+        <div className="container" style={{ textAlign: 'center', color: 'var(--text-light)' }}>
+          Cargando menu...
         </div>
+      </section>
+    );
+  }
 
-        {loading ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-light)' }}>Cargando menu ...</p>
-        ) : items.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-light)' }}>No hay platillos disponibles en esta categoria.</p>
+  const dayItems = items.filter(i => DAY_CATS.includes(i.categoria));
+  const nightItems = items.filter(i => NIGHT_CATS.includes(i.categoria));
+
+  const renderSection = (title, subtitle, items, colors) => (
+    <div style={{
+      padding: '60px 0',
+      background: colors.bg,
+      borderTop: `1px solid ${colors.cardBorder}`,
+      borderBottom: `1px solid ${colors.cardBorder}`,
+    }}>
+      <div className="container">
+        <h2 style={{
+          textAlign: 'center',
+          fontSize: '2rem',
+          fontWeight: 600,
+          marginBottom: '8px',
+          color: colors.title,
+        }}>
+          {title}
+        </h2>
+        <div style={{
+          width: '40px',
+          height: '2px',
+          background: colors.accent,
+          margin: '16px auto',
+        }} />
+        <p className="section-subtitle">{subtitle}</p>
+
+        {items.length === 0 ? (
+          <p style={{ textAlign: 'center', color: 'var(--text-light)', fontSize: '14px' }}>
+            No hay platillos disponibles en esta seccion.
+          </p>
         ) : (
           <div className="menu-grid">
             {items.map(item => (
-              <div key={item.id} className="card">
+              <div key={item.id} className="card" style={{ borderColor: colors.cardBorder }}>
                 <div style={{
-                  height: '200px',
-                  background: `linear-gradient(135deg, var(--bg-alt), var(--border))`,
+                  height: '180px',
+                  background: `linear-gradient(135deg, ${colors.headerBg}, ${colors.accent})`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: 'var(--text-lightest)',
-                  fontSize: '28px',
-                  letterSpacing: '4px',
+                  color: colors.headerText,
+                  fontSize: '14px',
+                  letterSpacing: '3px',
+                  textTransform: 'uppercase',
+                  fontWeight: 500,
                 }}>
-                  {item.categoria.toUpperCase()}
+                  {item.categoria}
                 </div>
                 <div className="card-body">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
@@ -70,7 +107,16 @@ export default function Menu() {
                     </span>
                   </div>
                   <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '12px', lineHeight: '1.7' }}>{item.descripcion}</p>
-                  <span style={{ fontSize: '12px', color: 'var(--text-lightest)', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+                  <span style={{
+                    fontSize: '11px',
+                    color: colors.tagText,
+                    background: colors.tagBg,
+                    padding: '2px 10px',
+                    borderRadius: '4px',
+                    letterSpacing: '0.5px',
+                    textTransform: 'uppercase',
+                    fontWeight: 600,
+                  }}>
                     {item.categoria}
                   </span>
                 </div>
@@ -79,6 +125,32 @@ export default function Menu() {
           </div>
         )}
       </div>
+    </div>
+  );
+
+  return (
+    <section>
+      <div style={{ padding: '60px 0', background: 'var(--bg)' }}>
+        <div className="container">
+          <h2 className="section-title">Nuestro Menu</h2>
+          <div className="divider" />
+          <p className="section-subtitle">Descubra nuestra seleccion de platillos para cada momento del dia.</p>
+        </div>
+      </div>
+
+      {renderSection(
+        'Desayuno / Almuerzo',
+        'El mejor inicio para su dia con ingredientes frescos y sabores unicos.',
+        dayItems,
+        DAY_COLORS
+      )}
+
+      {renderSection(
+        'Comida / Cena',
+        'Una experiencia gastronomica completa para los momentos mas especiales.',
+        nightItems,
+        NIGHT_COLORS
+      )}
     </section>
   );
 }
