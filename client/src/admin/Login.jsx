@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
@@ -26,7 +27,24 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <div className="login-card">
+      <div className="login-card" style={{ position: 'relative' }}>
+        <Link to="/" style={{
+          position: 'absolute',
+          top: '20px',
+          left: '24px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '6px',
+          color: 'var(--text-light)',
+          fontSize: '13px',
+          transition: 'color 0.2s',
+        }}
+          onMouseEnter={e => e.target.style.color = '#1a1a1a'}
+          onMouseLeave={e => e.target.style.color = 'var(--text-light)'}
+        >
+          <ArrowLeft size={16} strokeWidth={1.5} />
+          Regresar
+        </Link>
         <h1>Mis Ayeres</h1>
         <p className="login-subtitle">Panel de Administracion</p>
 
