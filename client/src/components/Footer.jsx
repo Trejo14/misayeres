@@ -27,6 +27,7 @@ export default function Footer() {
             <p><Link to="/menu">Menú</Link></p>
             <p><Link to="/reservations">Reservaciones</Link></p>
             <p><Link to="/contact">Contacto</Link></p>
+            <p><Link to="/login" style={{ fontSize: '13px', opacity: 0.7 }}>Admin</Link></p>
           </div>
         </div>
         <div className="footer-bottom">
