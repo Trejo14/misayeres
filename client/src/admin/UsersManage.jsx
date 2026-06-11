@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 
 const ROLES = ['empleado', 'admin', 'dueno'];
 
@@ -66,7 +67,9 @@ export default function UsersManage() {
     <div>
       <div className="admin-header">
         <h1>Gestion de Usuarios</h1>
-        <button className="btn btn-primary" onClick={openCreate}>+ Nuevo Usuario</button>
+        <button className="btn btn-primary" onClick={openCreate}>
+          <Plus size={16} strokeWidth={2} /> Nuevo Usuario
+        </button>
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'auto' }}>
@@ -89,12 +92,12 @@ export default function UsersManage() {
                 <td style={{ color: 'var(--text-light)', fontSize: '13px' }}>{u.created_at}</td>
                 <td>
                   <button className="btn btn-sm btn-outline" onClick={() => openEdit(u)} style={{ marginRight: '8px' }}>
-                    Editar
+                    <Pencil size={14} strokeWidth={1.5} /> Editar
                   </button>
                   {u.rol !== 'dueno' && (
                     <button className="btn btn-sm" onClick={() => handleDelete(u.id)}
                       style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
-                      Eliminar
+                      <Trash2 size={14} strokeWidth={1.5} /> Eliminar
                     </button>
                   )}
                 </td>

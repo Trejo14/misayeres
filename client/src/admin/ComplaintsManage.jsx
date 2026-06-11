@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { Plus, Check, Trash2 } from 'lucide-react';
 
 const TIPOS = ['Atencion al cliente', 'Puntualidad', 'Calidad de trabajo', 'Actitud', 'Incumplimiento', 'Otro'];
 const ESTADOS = ['abierta', 'investigando', 'resuelta', 'cerrada'];
@@ -48,7 +49,9 @@ export default function ComplaintsManage() {
     <div>
       <div className="admin-header">
         <h1>Sistema de Quejas</h1>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Nueva Queja</button>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          <Plus size={16} strokeWidth={2} /> Nueva Queja
+        </button>
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'auto' }}>

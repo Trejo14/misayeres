@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Trash2 } from 'lucide-react';
 
 const ESTADOS = ['pendiente', 'confirmada', 'cancelada', 'completada'];
 
@@ -74,7 +75,7 @@ export default function ReservationsManage() {
                   </select>
                   <button className="btn btn-sm" onClick={() => handleDelete(item.id)}
                     style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
-                    Eliminar
+                    <Trash2 size={14} strokeWidth={1.5} /> Eliminar
                   </button>
                 </td>
               </tr>

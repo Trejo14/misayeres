@@ -1,5 +1,14 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import {
+  LayoutDashboard,
+  UtensilsCrossed,
+  CalendarDays,
+  Users,
+  AlertTriangle,
+  MessageSquare,
+  LogOut,
+} from 'lucide-react';
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -14,12 +23,12 @@ export default function AdminLayout() {
   };
 
   const navItems = [
-    { path: '/admin', label: 'Dashboard' },
-    { path: '/admin/menu', label: 'Menu' },
-    { path: '/admin/reservations', label: 'Reservas' },
-    { path: '/admin/users', label: 'Usuarios' },
-    { path: '/admin/complaints', label: 'Quejas' },
-    { path: '/admin/messages', label: 'Mensajes' },
+    { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { path: '/admin/menu', label: 'Menu', icon: UtensilsCrossed },
+    { path: '/admin/reservations', label: 'Reservas', icon: CalendarDays },
+    { path: '/admin/users', label: 'Usuarios', icon: Users },
+    { path: '/admin/complaints', label: 'Quejas', icon: AlertTriangle },
+    { path: '/admin/messages', label: 'Mensajes', icon: MessageSquare },
   ];
 
   return (
@@ -33,14 +42,17 @@ export default function AdminLayout() {
           <span>{user?.rol}</span>
         </div>
         <nav className="admin-nav">
-          {navItems.map(item => (
-            <Link key={item.path} to={item.path} style={isActive(item.path)}>
-              <span className="nav-icon">--</span>
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map(item => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.path} to={item.path} style={isActive(item.path)}>
+                <Icon size={18} strokeWidth={1.5} style={{ opacity: 0.6 }} />
+                {item.label}
+              </Link>
+            );
+          })}
           <a href="#" onClick={handleLogout} style={{ marginTop: 'auto', color: 'var(--text-light)', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-            <span className="nav-icon">--</span>
+            <LogOut size={18} strokeWidth={1.5} style={{ opacity: 0.6 }} />
             Cerrar Sesion
           </a>
         </nav>

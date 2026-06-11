@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { Check, Trash2 } from 'lucide-react';
 
 export default function ContactMessages() {
   const [messages, setMessages] = useState([]);
@@ -72,12 +73,12 @@ export default function ContactMessages() {
                 <td>
                   {!m.leido && (
                     <button className="btn btn-sm btn-outline" onClick={() => markAsRead(m.id)} style={{ marginRight: '8px' }}>
-                      Marcar leido
+                      <Check size={14} strokeWidth={1.5} /> Leido
                     </button>
                   )}
                   <button className="btn btn-sm" onClick={() => handleDelete(m.id)}
                     style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
-                    Eliminar
+                    <Trash2 size={14} strokeWidth={1.5} /> Eliminar
                   </button>
                 </td>
               </tr>
