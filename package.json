@@ -1,0 +1,8 @@
+{
+  "name": "misayeres",
+  "private": true,
+  "description": "Restaurante Mis Ayères",
+  "engines": {
+    "node": ">=18"
+  }
+}
