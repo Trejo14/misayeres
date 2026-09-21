@@ -480,6 +480,9 @@ img { max-width: 100%; }
 .badge-investigando { background: #f0f0f0; color: #4a4a4a; }
 .badge-resuelta { background: #e8e8e8; color: #1a1a1a; }
 .badge-cerrada { background: #f5f5f5; color: #999; }
+.badge-normal { background: #f5f5f5; color: #666; }
+.badge-vip { background: #2d2d2d; color: #fff; }
+.badge-empresarial { background: #e8e8e8; color: #1a1a1a; }
 
 .modal-overlay {
   position: fixed;

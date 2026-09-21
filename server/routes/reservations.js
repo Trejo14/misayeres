@@ -14,17 +14,31 @@ router.get('/', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, re
   }
 });
 
+const TIPOS_CLIENTE = ['normal', 'vip', 'empresarial'];
+
 router.post('/', async (req, res) => {
   try {
-    const { nombre_cliente, telefono, email, fecha, hora, personas, notas } = req.body;
+    const {
+      nombre_cliente, telefono, email, fecha, hora, personas, notas,
+      alergias, tipo_cliente, fecha_cumpleanos,
+    } = req.body;
 
     if (!nombre_cliente || !telefono || !fecha || !hora || !personas) {
       return res.status(400).json({ error: 'Campos requeridos: nombre, teléfono, fecha, hora, personas' });
     }
 
+    if (tipo_cliente && !TIPOS_CLIENTE.includes(tipo_cliente)) {
+      return res.status(400).json({ error: 'Tipo de cliente inválido' });
+    }
+
     await run(
-      'INSERT INTO reservas (nombre_cliente, telefono, email, fecha, hora, personas, notas) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-      [nombre_cliente, telefono, email || '', fecha, hora, parseInt(personas), notas || '']
+      `INSERT INTO reservas
+        (nombre_cliente, telefono, email, fecha, hora, personas, notas, alergias, tipo_cliente, fecha_cumpleanos)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+      [
+        nombre_cliente, telefono, email || '', fecha, hora, parseInt(personas), notas || '',
+        alergias || '', tipo_cliente || 'normal', fecha_cumpleanos || null,
+      ]
     );
 
     res.status(201).json({ message: 'Reserva creada exitosamente' });

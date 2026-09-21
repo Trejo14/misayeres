@@ -45,10 +45,17 @@ export async function initDB() {
         hora TIME NOT NULL,
         personas INTEGER NOT NULL,
         notas TEXT,
+        alergias TEXT,
+        tipo_cliente TEXT DEFAULT 'normal' CHECK(tipo_cliente IN ('normal', 'vip', 'empresarial')),
+        fecha_cumpleanos DATE,
         estado TEXT DEFAULT 'pendiente' CHECK(estado IN ('pendiente', 'confirmada', 'cancelada', 'completada')),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    await client.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS alergias TEXT`);
+    await client.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS tipo_cliente TEXT DEFAULT 'normal'`);
+    await client.query(`ALTER TABLE reservas ADD COLUMN IF NOT EXISTS fecha_cumpleanos DATE`);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS quejas (
