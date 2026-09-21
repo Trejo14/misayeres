@@ -10,9 +10,6 @@ export default function Reservations() {
     hora: '',
     personas: 2,
     notas: '',
-    alergias: '',
-    tipo_cliente: 'normal',
-    fecha_cumpleanos: '',
   });
   const [status, setStatus] = useState('');
 
@@ -24,10 +21,7 @@ export default function Reservations() {
     try {
       await axios.post('/api/reservations', form);
       setStatus('exito');
-      setForm({
-        nombre_cliente: '', telefono: '', email: '', fecha: '', hora: '', personas: 2, notas: '',
-        alergias: '', tipo_cliente: 'normal', fecha_cumpleanos: '',
-      });
+      setForm({ nombre_cliente: '', telefono: '', email: '', fecha: '', hora: '', personas: 2, notas: '' });
     } catch {
       setStatus('error');
     }
@@ -113,41 +107,6 @@ export default function Reservations() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div className="form-group">
-                <label>Tipo de Cliente</label>
-                <select
-                  name="tipo_cliente"
-                  value={form.tipo_cliente}
-                  onChange={handleChange}
-                >
-                  <option value="normal">Normal</option>
-                  <option value="vip">VIP</option>
-                  <option value="empresarial">Empresarial</option>
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Fecha de Cumpleaños (opcional)</label>
-                <input
-                  type="date"
-                  name="fecha_cumpleanos"
-                  value={form.fecha_cumpleanos}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Alergias (opcional)</label>
-              <input
-                type="text"
-                name="alergias"
-                value={form.alergias}
-                onChange={handleChange}
-                placeholder="Ej. mariscos, nueces, gluten..."
-              />
-            </div>
-
             <div className="form-group">
               <label>Notas (opcional)</label>
               <textarea
@@ -155,7 +114,7 @@ export default function Reservations() {
                 rows="3"
                 value={form.notas}
                 onChange={handleChange}
-                placeholder="Ocasiones especiales, preferencias..."
+                placeholder="Alergias, ocasiones especiales, preferencias..."
               />
             </div>
 

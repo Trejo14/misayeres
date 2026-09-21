@@ -11,6 +11,7 @@ import AdminLayout from './admin/AdminLayout';
 import Dashboard from './admin/Dashboard';
 import MenuManage from './admin/MenuManage';
 import ReservationsManage from './admin/ReservationsManage';
+import ClientsManage from './admin/ClientsManage';
 import UsersManage from './admin/UsersManage';
 import ComplaintsManage from './admin/ComplaintsManage';
 import ContactMessages from './admin/ContactMessages';
@@ -29,6 +30,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="menu" element={<MenuManage />} />
           <Route path="reservations" element={<ReservationsManage />} />
+          <Route path="clients" element={<ClientsManage />} />
           <Route path="users" element={<UsersManage />} />
           <Route path="complaints" element={<ComplaintsManage />} />
           <Route path="messages" element={<ContactMessages />} />

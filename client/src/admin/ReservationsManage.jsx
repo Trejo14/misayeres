@@ -47,10 +47,6 @@ export default function ReservationsManage() {
             <tr>
               <th>Cliente</th>
               <th>Telefono</th>
-              <th>Correo</th>
-              <th>Tipo</th>
-              <th>Alergias</th>
-              <th>Cumpleaños</th>
               <th>Fecha</th>
               <th>Hora</th>
               <th>Personas</th>
@@ -63,12 +59,6 @@ export default function ReservationsManage() {
               <tr key={item.id}>
                 <td>{item.nombre_cliente}</td>
                 <td>{item.telefono}</td>
-                <td>{item.email || '-'}</td>
-                <td>
-                  <span className={`badge badge-${item.tipo_cliente || 'normal'}`}>{item.tipo_cliente || 'normal'}</span>
-                </td>
-                <td>{item.alergias || '-'}</td>
-                <td>{item.fecha_cumpleanos || '-'}</td>
                 <td>{item.fecha}</td>
                 <td>{item.hora}</td>
                 <td>{item.personas}</td>
@@ -91,7 +81,7 @@ export default function ReservationsManage() {
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan="11" style={{ textAlign: 'center', color: 'var(--text-light)', padding: '24px' }}>
+              <tr><td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-light)', padding: '24px' }}>
                 No hay reservaciones
               </td></tr>
             )}
