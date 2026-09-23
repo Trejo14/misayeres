@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -10,7 +11,10 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="container">
-        <Link to="/" className="logo">Mis<span>Ayeres</span></Link>
+        <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img src={logo} alt="Mis Ayeres" style={{ height: '40px', width: 'auto' }} />
+          Mis<span>Ayeres</span>
+        </Link>
         <ul className="nav-links">
           <li><Link to="/" style={isActive('/')}>Inicio</Link></li>
           <li><Link to="/menu" style={isActive('/menu')}>Menu</Link></li>

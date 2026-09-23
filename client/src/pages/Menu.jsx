@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena'];
+const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena', 'Bebidas'];
 const DAY_CATS = ['Desayuno', 'Almuerzo'];
 const NIGHT_CATS = ['Comida', 'Cena'];
+const DRINK_CATS = ['Bebidas'];
 
 const DAY_COLORS = {
   bg: 'linear-gradient(135deg, #fff8e1, #ffecb3)',
@@ -25,6 +26,17 @@ const NIGHT_COLORS = {
   tagBg: '#37474f',
   tagText: '#b0bec5',
   title: '#eceff1',
+};
+
+const DRINK_COLORS = {
+  bg: 'linear-gradient(135deg, #e0f7fa, #b2ebf2)',
+  headerBg: '#00838f',
+  headerText: '#ffffff',
+  accent: '#00acc1',
+  cardBorder: '#80deea',
+  tagBg: '#e0f7fa',
+  tagText: '#00838f',
+  title: '#006064',
 };
 
 export default function Menu() {
@@ -51,6 +63,7 @@ export default function Menu() {
 
   const dayItems = items.filter(i => DAY_CATS.includes(i.categoria));
   const nightItems = items.filter(i => NIGHT_CATS.includes(i.categoria));
+  const drinkItems = items.filter(i => DRINK_CATS.includes(i.categoria));
 
   const renderSection = (title, subtitle, items, colors) => (
     <div style={{
@@ -150,6 +163,13 @@ export default function Menu() {
         'Una experiencia gastronomica completa para los momentos mas especiales.',
         nightItems,
         NIGHT_COLORS
+      )}
+
+      {renderSection(
+        'Bebidas',
+        'Refrescos, coctelería y bebidas artesanales para acompañar cada platillo.',
+        drinkItems,
+        DRINK_COLORS
       )}
     </section>
   );

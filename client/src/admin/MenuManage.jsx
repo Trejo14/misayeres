@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 
-const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena'];
+const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena', 'Bebidas'];
 
 export default function MenuManage() {
   const [items, setItems] = useState([]);

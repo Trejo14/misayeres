@@ -1,5 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
 import {
   LayoutDashboard,
   UtensilsCrossed,
@@ -36,7 +37,8 @@ export default function AdminLayout() {
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
-        <div className="logo">
+        <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img src={logo} alt="Mis Ayeres" style={{ height: '32px', width: 'auto' }} />
           Mis<span>Ayeres</span>
         </div>
         <div className="user-info">

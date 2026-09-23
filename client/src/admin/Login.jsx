@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/logo.png';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -45,6 +46,7 @@ export default function Login() {
           <ArrowLeft size={16} strokeWidth={1.5} />
           Regresar
         </Link>
+        <img src={logo} alt="Mis Ayeres" style={{ height: '64px', width: 'auto', display: 'block', margin: '0 auto 12px' }} />
         <h1>Mis Ayeres</h1>
         <p className="login-subtitle">Panel de Administracion</p>
 

@@ -22,12 +22,12 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Campos requeridos: nombre, teléfono, fecha, hora, personas' });
     }
 
-    await run(
-      'INSERT INTO reservas (nombre_cliente, telefono, email, fecha, hora, personas, notas) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+    const result = await run(
+      'INSERT INTO reservas (nombre_cliente, telefono, email, fecha, hora, personas, notas) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
       [nombre_cliente, telefono, email || '', fecha, hora, parseInt(personas), notas || '']
     );
 
-    res.status(201).json({ message: 'Reserva creada exitosamente' });
+    res.status(201).json({ message: 'Reserva creada exitosamente', id: result.rows[0].id });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error del servidor' });

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 function IconEntradas() {
   return (
@@ -29,10 +30,21 @@ function IconPostres() {
   );
 }
 
+function IconBebidas() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 3h14l-1.5 15a2 2 0 01-2 1.8H8.5a2 2 0 01-2-1.8L5 3z" />
+      <path d="M7 9h10" />
+      <path d="M12 3v18" />
+    </svg>
+  );
+}
+
 const FEATURES = [
   { title: 'Entradas', desc: 'Comience su experiencia con nuestras entradas artesanales, preparadas con ingredientes frescos y de temporada.', icon: <IconEntradas /> },
   { title: 'Platos Fuertes', desc: 'Cortes de primera, pastas artesanales y platos de autor que definen nuestra cocina.', icon: <IconPlatos /> },
   { title: 'Postres', desc: 'Dulces tentaciones elaboradas al momento por nuestro chef pastelero.', icon: <IconPostres /> },
+  { title: 'Bebidas', desc: 'Coctelería de autor, vinos seleccionados y bebidas artesanales para acompañar su experiencia.', icon: <IconBebidas /> },
 ];
 
 export default function Home() {
@@ -55,6 +67,7 @@ export default function Home() {
           pointerEvents: 'none',
         }} />
         <div className="container" style={{ position: 'relative' }}>
+          <img src={logo} alt="Mis Ayeres" style={{ height: '96px', width: 'auto', margin: '0 auto 24px', display: 'block' }} />
           <h1 style={{
             fontFamily: "'Playfair Display SC', serif",
             fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',

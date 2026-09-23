@@ -7,7 +7,22 @@ const TIPOS_CLIENTE = ['normal', 'vip', 'empresarial'];
 
 router.get('/', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'), async (req, res) => {
   try {
-    const items = await query('SELECT * FROM clientes ORDER BY created_at DESC');
+    const items = await query(`
+      SELECT c.*,
+        COALESCE(v.visitas, 0)::int as visitas,
+        COALESCE(v.total_reservas, 0)::int as total_reservas,
+        v.ultima_visita
+      FROM clientes c
+      LEFT JOIN (
+        SELECT telefono,
+          COUNT(*) FILTER (WHERE estado = 'completada') as visitas,
+          COUNT(*) as total_reservas,
+          MAX(fecha) FILTER (WHERE estado = 'completada') as ultima_visita
+        FROM reservas
+        GROUP BY telefono
+      ) v ON v.telefono = c.telefono
+      ORDER BY c.created_at DESC
+    `);
     res.json(items);
   } catch (err) {
     console.error(err);

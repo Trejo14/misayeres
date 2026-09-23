@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 export default function Footer() {
   return (
@@ -6,7 +7,10 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div>
-            <h4>Mis Ayeres</h4>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+              <img src={logo} alt="Mis Ayeres" style={{ height: '36px', width: 'auto' }} />
+              <h4 style={{ marginBottom: 0 }}>Mis Ayeres</h4>
+            </div>
             <p>Donde cada bocado cuenta una historia.</p>
           </div>
           <div>

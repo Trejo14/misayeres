@@ -80,6 +80,8 @@ export default function ClientsManage() {
               <th>Telefono</th>
               <th>Correo</th>
               <th>Tipo</th>
+              <th>Visitas</th>
+              <th>Ultima Visita</th>
               <th>Alergias</th>
               <th>Cumpleaños</th>
               <th>Acciones</th>
@@ -94,6 +96,16 @@ export default function ClientsManage() {
                 <td>
                   <span className={`badge badge-${c.tipo_cliente || 'normal'}`}>{c.tipo_cliente || 'normal'}</span>
                 </td>
+                <td>
+                  <span
+                    className="badge"
+                    title={`${c.total_reservas || 0} reserva(s) en total`}
+                    style={{ background: c.visitas > 0 ? '#2d2d2d' : '#f5f5f5', color: c.visitas > 0 ? '#fff' : '#999' }}
+                  >
+                    {c.visitas || 0}
+                  </span>
+                </td>
+                <td>{c.ultima_visita ? c.ultima_visita.slice(0, 10) : '-'}</td>
                 <td>{c.alergias || '-'}</td>
                 <td>{c.fecha_cumpleanos ? c.fecha_cumpleanos.slice(0, 10) : '-'}</td>
                 <td>
@@ -108,7 +120,7 @@ export default function ClientsManage() {
               </tr>
             ))}
             {clients.length === 0 && (
-              <tr><td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-light)', padding: '24px' }}>
+              <tr><td colSpan="9" style={{ textAlign: 'center', color: 'var(--text-light)', padding: '24px' }}>
                 No hay clientes
               </td></tr>
             )}
