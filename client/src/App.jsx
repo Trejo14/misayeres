@@ -17,6 +17,9 @@ import ComplaintsManage from './admin/ComplaintsManage';
 import ContactMessages from './admin/ContactMessages';
 import ProtectedRoute from './components/ProtectedRoute';
 
+const STAFF = ['dueno', 'admin'];
+const OWNER = ['dueno'];
+
 export default function App() {
   return (
     <AuthProvider>
@@ -28,12 +31,12 @@ export default function App() {
           </ProtectedRoute>
         }>
           <Route index element={<Dashboard />} />
-          <Route path="menu" element={<MenuManage />} />
-          <Route path="reservations" element={<ReservationsManage />} />
+          <Route path="menu" element={<ProtectedRoute roles={STAFF}><MenuManage /></ProtectedRoute>} />
+          <Route path="reservations" element={<ProtectedRoute roles={STAFF}><ReservationsManage /></ProtectedRoute>} />
           <Route path="clients" element={<ClientsManage />} />
-          <Route path="users" element={<UsersManage />} />
+          <Route path="users" element={<ProtectedRoute roles={OWNER}><UsersManage /></ProtectedRoute>} />
           <Route path="complaints" element={<ComplaintsManage />} />
-          <Route path="messages" element={<ContactMessages />} />
+          <Route path="messages" element={<ProtectedRoute roles={STAFF}><ContactMessages /></ProtectedRoute>} />
         </Route>
         <Route path="*" element={
           <>

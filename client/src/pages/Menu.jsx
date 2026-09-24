@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { formatPrice } from '../utils/format';
 
 const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena', 'Bebidas'];
 const DAY_CATS = ['Desayuno', 'Almuerzo'];
@@ -98,25 +99,34 @@ export default function Menu() {
           <div className="menu-grid">
             {items.map(item => (
               <div key={item.id} className="card" style={{ borderColor: colors.cardBorder }}>
-                <div style={{
-                  height: '180px',
-                  background: `linear-gradient(135deg, ${colors.headerBg}, ${colors.accent})`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: colors.headerText,
-                  fontSize: '14px',
-                  letterSpacing: '3px',
-                  textTransform: 'uppercase',
-                  fontWeight: 500,
-                }}>
-                  {item.categoria}
-                </div>
+                {item.imagen ? (
+                  <img
+                    src={item.imagen}
+                    alt={item.nombre}
+                    loading="lazy"
+                    style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block' }}
+                  />
+                ) : (
+                  <div style={{
+                    height: '180px',
+                    background: `linear-gradient(135deg, ${colors.headerBg}, ${colors.accent})`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: colors.headerText,
+                    fontSize: '14px',
+                    letterSpacing: '3px',
+                    textTransform: 'uppercase',
+                    fontWeight: 500,
+                  }}>
+                    {item.categoria}
+                  </div>
+                )}
                 <div className="card-body">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                     <h3 style={{ fontSize: '1.1rem' }}>{item.nombre}</h3>
                     <span style={{ color: 'var(--text)', fontWeight: 600, fontSize: '1.1rem', whiteSpace: 'nowrap', marginLeft: '16px' }}>
-                      ${parseFloat(item.precio).toFixed(2)}
+                      {formatPrice(item.precio)}
                     </span>
                   </div>
                   <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '12px', lineHeight: '1.7' }}>{item.descripcion}</p>

@@ -34,7 +34,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>&copy; 2024 Mis Ayeres. Todos los derechos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} Mis Ayeres. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>

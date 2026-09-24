@@ -1,7 +1,11 @@
 import pkg from 'pg';
 import bcrypt from 'bcryptjs';
 
-const { Pool } = pkg;
+const { Pool, types } = pkg;
+
+// Devuelve las columnas DATE como texto 'YYYY-MM-DD' en lugar de un Date de JS,
+// que al serializarse a JSON puede correrse un dia por la zona horaria.
+types.setTypeParser(1082, (value) => value);
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -86,6 +90,23 @@ export async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Imagenes subidas desde el panel. Se guardan en la base de datos para que
+    // sobrevivan a los redeploys (el disco del contenedor es efimero).
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS imagenes (
+        id SERIAL PRIMARY KEY,
+        mime TEXT NOT NULL,
+        datos BYTEA NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Migraciones de quejas: cualquier usuario puede enviarlas, de forma anonima
+    // (sin reportero) y sin que sean necesariamente sobre un empleado concreto.
+    await client.query('ALTER TABLE quejas ALTER COLUMN reportero_id DROP NOT NULL');
+    await client.query('ALTER TABLE quejas ALTER COLUMN empleado_id DROP NOT NULL');
+    await client.query('ALTER TABLE quejas ADD COLUMN IF NOT EXISTS anonima BOOLEAN DEFAULT false');
 
     const result = await client.query('SELECT COUNT(*) as count FROM usuarios');
     if (parseInt(result.rows[0].count) === 0) {

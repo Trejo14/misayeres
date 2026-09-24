@@ -22,9 +22,23 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Campos requeridos: nombre, teléfono, fecha, hora, personas' });
     }
 
+    const numPersonas = parseInt(personas);
+    if (Number.isNaN(numPersonas) || numPersonas < 1 || numPersonas > 20) {
+      return res.status(400).json({ error: 'El número de personas debe estar entre 1 y 20' });
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || !/^\d{2}:\d{2}/.test(hora)) {
+      return res.status(400).json({ error: 'Fecha u hora inválida' });
+    }
+
+    const [{ pasada }] = await query('SELECT $1::date < CURRENT_DATE as pasada', [fecha]);
+    if (pasada) {
+      return res.status(400).json({ error: 'No se pueden hacer reservas en fechas pasadas' });
+    }
+
     const result = await run(
       'INSERT INTO reservas (nombre_cliente, telefono, email, fecha, hora, personas, notas) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-      [nombre_cliente, telefono, email || '', fecha, hora, parseInt(personas), notas || '']
+      [nombre_cliente.trim(), telefono.trim(), email || '', fecha, hora, numPersonas, notas || '']
     );
 
     res.status(201).json({ message: 'Reserva creada exitosamente', id: result.rows[0].id });

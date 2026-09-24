@@ -2,15 +2,19 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { query } from '../db.js';
-import { authMiddleware } from '../middlewares/auth.js';
+import { authMiddleware, JWT_SECRET } from '../middlewares/auth.js';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'restaurante-secret-key-2024';
 
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const users = await query('SELECT * FROM usuarios WHERE email = $1', [email]);
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email y contraseña son requeridos' });
+    }
+
+    const users = await query('SELECT * FROM usuarios WHERE LOWER(email) = LOWER($1)', [email.trim()]);
 
     if (users.length === 0) {
       return res.status(401).json({ error: 'Credenciales inválidas' });

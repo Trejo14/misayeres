@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { formatDate, ROLE_LABELS } from '../utils/format';
 
 const ROLES = ['empleado', 'admin', 'dueno'];
 
@@ -50,12 +51,12 @@ export default function UsersManage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Eliminar este usuario?')) return;
+    if (!confirm('¿Eliminar este usuario?')) return;
     try {
       await axios.delete(`/api/users/${id}`);
       loadUsers();
-    } catch {
-      alert('Error al eliminar');
+    } catch (err) {
+      alert(err.response?.data?.error || 'Error al eliminar');
     }
   };
 
@@ -88,18 +89,19 @@ export default function UsersManage() {
               <tr key={u.id}>
                 <td>{u.nombre}</td>
                 <td>{u.email}</td>
-                <td><span className={`badge ${u.rol === 'dueno' ? 'badge-confirmada' : u.rol === 'admin' ? 'badge-pendiente' : 'badge-completada'}`}>{u.rol}</span></td>
-                <td style={{ color: 'var(--text-light)', fontSize: '13px' }}>{u.created_at}</td>
+                <td><span className={`badge ${u.rol === 'dueno' ? 'badge-confirmada' : u.rol === 'admin' ? 'badge-pendiente' : 'badge-completada'}`}>{ROLE_LABELS[u.rol] || u.rol}</span></td>
+                <td style={{ color: 'var(--text-light)', fontSize: '13px' }}>{formatDate(u.created_at)}</td>
                 <td>
-                  <button className="btn btn-sm btn-outline" onClick={() => openEdit(u)} style={{ marginRight: '8px' }}>
-                    <Pencil size={14} strokeWidth={1.5} /> Editar
-                  </button>
-                  {u.rol !== 'dueno' && (
-                    <button className="btn btn-sm" onClick={() => handleDelete(u.id)}
-                      style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
-                      <Trash2 size={14} strokeWidth={1.5} /> Eliminar
+                  <div className="table-actions">
+                    <button className="btn btn-sm btn-outline" onClick={() => openEdit(u)}>
+                      <Pencil size={14} strokeWidth={1.5} /> Editar
                     </button>
-                  )}
+                    {u.id !== user.id && (
+                      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(u.id)}>
+                        <Trash2 size={14} strokeWidth={1.5} /> Eliminar
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
@@ -128,13 +130,15 @@ export default function UsersManage() {
               <div className="form-group">
                 <label>{editing ? 'Nueva contrasena (dejar vacio para no cambiar)' : 'Contrasena'}</label>
                 <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
-                  required={!editing} />
+                  required={!editing} minLength={6} autoComplete="new-password" />
               </div>
               <div className="form-group">
                 <label>Rol</label>
-                <select value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })}>
-                  {ROLES.map(r => <option key={r}>{r}</option>)}
+                <select value={form.rol} onChange={e => setForm({ ...form, rol: e.target.value })}
+                  disabled={editing?.id === user.id}>
+                  {ROLES.map(r => <option key={r} value={r}>{ROLE_LABELS[r]}</option>)}
                 </select>
+                {editing?.id === user.id && <p className="form-hint">No puedes cambiar tu propio rol.</p>}
               </div>
               <div className="form-actions">
                 <button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Cancelar</button>

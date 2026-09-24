@@ -19,8 +19,8 @@ export default function Login() {
     try {
       await login(email, password);
       navigate('/admin');
-    } catch {
-      setError('Credenciales invalidas');
+    } catch (err) {
+      setError(err.response?.status === 401 ? 'Correo o contraseña incorrectos' : 'No se pudo iniciar sesion. Intente de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,8 @@ export default function Login() {
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="admin@restaurante.com"
+              placeholder="correo@ejemplo.com"
+              autoComplete="username"
               required
             />
           </div>
@@ -69,7 +70,7 @@ export default function Login() {
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              placeholder="admin123"
+              autoComplete="current-password"
               required
             />
           </div>
@@ -83,11 +84,13 @@ export default function Login() {
           </button>
         </form>
 
-        <div style={{ marginTop: '32px', fontSize: '12px', color: 'var(--text-lightest)', textAlign: 'center' }}>
-          <p style={{ marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Credenciales de prueba</p>
-          <p>dueno@restaurante.com / admin123</p>
-          <p>admin@restaurante.com / admin123</p>
-        </div>
+        {import.meta.env.DEV && (
+          <div style={{ marginTop: '32px', fontSize: '12px', color: 'var(--text-lightest)', textAlign: 'center' }}>
+            <p style={{ marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Credenciales de prueba</p>
+            <p>dueno@restaurante.com / admin123</p>
+            <p>admin@restaurante.com / admin123</p>
+          </div>
+        )}
       </div>
     </div>
   );

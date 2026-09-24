@@ -6,17 +6,25 @@ const router = Router();
 
 router.get('/stats', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
   try {
-    const totalPlatillos = (await query('SELECT COUNT(*) as count FROM platillos'))[0].count;
-    const totalReservas = (await query('SELECT COUNT(*) as count FROM reservas'))[0].count;
-    const reservasHoy = (await query("SELECT COUNT(*) as count FROM reservas WHERE fecha = CURRENT_DATE"))[0].count;
-    const reservasSemana = (await query("SELECT COUNT(*) as count FROM reservas WHERE fecha BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'"))[0].count;
-    const totalEmpleados = (await query("SELECT COUNT(*) as count FROM usuarios WHERE rol IN ('admin','empleado')"))[0].count;
-    const totalQuejas = (await query('SELECT COUNT(*) as count FROM quejas'))[0].count;
-    const quejasAbiertas = (await query("SELECT COUNT(*) as count FROM quejas WHERE estado IN ('abierta','investigando')"))[0].count;
-    const totalContactos = (await query('SELECT COUNT(*) as count FROM contactos'))[0].count;
-    const contactosNoLeidos = (await query('SELECT COUNT(*) as count FROM contactos WHERE leido = 0'))[0].count;
-    const totalClientes = (await query('SELECT COUNT(*) as count FROM clientes'))[0].count;
-    const clientesVIP = (await query("SELECT COUNT(*) as count FROM clientes WHERE tipo_cliente = 'vip'"))[0].count;
+    const count = async (sql) => parseInt((await query(sql))[0].count);
+    const esDueno = req.user.rol === 'dueno';
+
+    const [
+      totalPlatillos, totalReservas, reservasHoy, reservasSemana, totalEmpleados,
+      totalQuejas, quejasAbiertas, totalContactos, contactosNoLeidos, totalClientes, clientesVIP,
+    ] = await Promise.all([
+      count('SELECT COUNT(*) as count FROM platillos'),
+      count('SELECT COUNT(*) as count FROM reservas'),
+      count('SELECT COUNT(*) as count FROM reservas WHERE fecha = CURRENT_DATE'),
+      count("SELECT COUNT(*) as count FROM reservas WHERE fecha BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'"),
+      count("SELECT COUNT(*) as count FROM usuarios WHERE rol IN ('admin','empleado')"),
+      count('SELECT COUNT(*) as count FROM quejas'),
+      count("SELECT COUNT(*) as count FROM quejas WHERE estado IN ('abierta','investigando')"),
+      count('SELECT COUNT(*) as count FROM contactos'),
+      count('SELECT COUNT(*) as count FROM contactos WHERE leido = 0'),
+      count('SELECT COUNT(*) as count FROM clientes'),
+      count("SELECT COUNT(*) as count FROM clientes WHERE tipo_cliente = 'vip'"),
+    ]);
 
     const quejasPorEmpleado = await query(`
       SELECT e.nombre, e.id, COUNT(q.id)::int as total,
@@ -52,7 +60,7 @@ router.get('/stats', authMiddleware, roleMiddleware('dueno', 'admin'), async (re
       LIMIT 5
     `);
 
-    res.json({
+    const stats = {
       totalPlatillos,
       totalReservas,
       reservasHoy,
@@ -71,7 +79,16 @@ router.get('/stats', authMiddleware, roleMiddleware('dueno', 'admin'), async (re
       platillosPorCategoria,
       reservasProximas,
       topClientes,
-    });
+    };
+
+    // Las quejas son confidenciales: solo el dueño recibe sus estadisticas.
+    if (!esDueno) {
+      for (const key of ['totalQuejas', 'quejasAbiertas', 'quejasPorEmpleado', 'quejasPorEstado', 'quejasPorTipo']) {
+        delete stats[key];
+      }
+    }
+
+    res.json(stats);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Error del servidor' });

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { formatDate } from '../utils/format';
 
 const TIPOS = ['normal', 'vip', 'empresarial'];
 const EMPTY_FORM = { nombre: '', telefono: '', email: '', alergias: '', tipo_cliente: 'normal', fecha_cumpleanos: '' };
@@ -10,6 +12,10 @@ export default function ClientsManage() {
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
+  const [search, setSearch] = useState('');
+  const [filterTipo, setFilterTipo] = useState('');
+  const { user } = useAuth();
+  const canEdit = ['dueno', 'admin'].includes(user?.rol);
 
   const loadClients = () => {
     axios.get('/api/clients')
@@ -54,7 +60,7 @@ export default function ClientsManage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Eliminar este cliente?')) return;
+    if (!confirm('¿Eliminar este cliente?')) return;
     try {
       await axios.delete(`/api/clients/${id}`);
       loadClients();
@@ -63,13 +69,29 @@ export default function ClientsManage() {
     }
   };
 
+  const term = search.trim().toLowerCase();
+  const visible = clients.filter(c =>
+    (!filterTipo || (c.tipo_cliente || 'normal') === filterTipo) &&
+    (!term || c.nombre.toLowerCase().includes(term) || c.telefono.includes(term) || (c.email || '').toLowerCase().includes(term))
+  );
+
   return (
     <div>
       <div className="admin-header">
         <h1>Clientes</h1>
-        <button className="btn btn-primary" onClick={openCreate}>
-          <Plus size={16} strokeWidth={2} /> Nuevo Cliente
-        </button>
+        {canEdit && (
+          <button className="btn btn-primary" onClick={openCreate}>
+            <Plus size={16} strokeWidth={2} /> Nuevo Cliente
+          </button>
+        )}
+      </div>
+
+      <div className="toolbar">
+        <input placeholder="Buscar por nombre, telefono o correo..." value={search} onChange={e => setSearch(e.target.value)} />
+        <select value={filterTipo} onChange={e => setFilterTipo(e.target.value)}>
+          <option value="">Todos los tipos</option>
+          {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'auto' }}>
@@ -84,11 +106,11 @@ export default function ClientsManage() {
               <th>Ultima Visita</th>
               <th>Alergias</th>
               <th>Cumpleaños</th>
-              <th>Acciones</th>
+              {canEdit && <th>Acciones</th>}
             </tr>
           </thead>
           <tbody>
-            {clients.map(c => (
+            {visible.map(c => (
               <tr key={c.id}>
                 <td>{c.nombre}</td>
                 <td>{c.telefono}</td>
@@ -105,30 +127,33 @@ export default function ClientsManage() {
                     {c.visitas || 0}
                   </span>
                 </td>
-                <td>{c.ultima_visita ? c.ultima_visita.slice(0, 10) : '-'}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>{formatDate(c.ultima_visita)}</td>
                 <td>{c.alergias || '-'}</td>
-                <td>{c.fecha_cumpleanos ? c.fecha_cumpleanos.slice(0, 10) : '-'}</td>
-                <td>
-                  <button className="btn btn-sm btn-outline" onClick={() => openEdit(c)} style={{ marginRight: '8px' }}>
-                    <Pencil size={14} strokeWidth={1.5} /> Editar
-                  </button>
-                  <button className="btn btn-sm" onClick={() => handleDelete(c.id)}
-                    style={{ background: '#1a1a1a', color: 'white', border: 'none' }}>
-                    <Trash2 size={14} strokeWidth={1.5} /> Eliminar
-                  </button>
-                </td>
+                <td style={{ whiteSpace: 'nowrap' }}>{formatDate(c.fecha_cumpleanos)}</td>
+                {canEdit && (
+                  <td>
+                    <div className="table-actions">
+                      <button className="btn btn-sm btn-outline" onClick={() => openEdit(c)}>
+                        <Pencil size={14} strokeWidth={1.5} /> Editar
+                      </button>
+                      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(c.id)}>
+                        <Trash2 size={14} strokeWidth={1.5} /> Eliminar
+                      </button>
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
-            {clients.length === 0 && (
-              <tr><td colSpan="9" style={{ textAlign: 'center', color: 'var(--text-light)', padding: '24px' }}>
-                No hay clientes
+            {visible.length === 0 && (
+              <tr><td colSpan={canEdit ? 9 : 8} className="empty-row">
+                {clients.length === 0 ? 'No hay clientes' : 'Ningun cliente coincide con la busqueda'}
               </td></tr>
             )}
           </tbody>
         </table>
       </div>
 
-      {showModal && (
+      {showModal && canEdit && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h2>{editing ? 'Editar Cliente' : 'Nuevo Cliente'}</h2>

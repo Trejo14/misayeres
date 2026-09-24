@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { todayISO } from '../utils/format';
 
 export default function Reservations() {
   const [form, setForm] = useState({
@@ -12,8 +13,9 @@ export default function Reservations() {
     notas: '',
   });
   const [status, setStatus] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = todayISO();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +24,8 @@ export default function Reservations() {
       await axios.post('/api/reservations', form);
       setStatus('exito');
       setForm({ nombre_cliente: '', telefono: '', email: '', fecha: '', hora: '', personas: 2, notas: '' });
-    } catch {
+    } catch (err) {
+      setErrorMsg(err.response?.data?.error || 'Error al crear la reserva. Intente de nuevo.');
       setStatus('error');
     }
   };
@@ -49,7 +52,7 @@ export default function Reservations() {
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className="form-row">
               <div className="form-group">
                 <label>Telefono</label>
                 <input
@@ -71,7 +74,7 @@ export default function Reservations() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+            <div className="form-row">
               <div className="form-group">
                 <label>Fecha</label>
                 <input
@@ -123,14 +126,12 @@ export default function Reservations() {
             </button>
 
             {status === 'exito' && (
-              <p style={{ color: 'var(--text)', fontSize: '14px', marginTop: '12px' }}>
+              <div className="notice notice-success">
                 Reserva creada con exito. Le contactaremos para confirmar.
-              </p>
+              </div>
             )}
             {status === 'error' && (
-              <p style={{ color: 'var(--text-light)', fontSize: '14px', marginTop: '12px' }}>
-                Error al crear la reserva. Intente de nuevo.
-              </p>
+              <div className="notice notice-error">{errorMsg}</div>
             )}
           </form>
         </div>

@@ -4,6 +4,7 @@ import axios from 'axios';
 export default function Contact() {
   const [form, setForm] = useState({ nombre: '', email: '', mensaje: '' });
   const [status, setStatus] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -12,7 +13,8 @@ export default function Contact() {
       await axios.post('/api/contact', form);
       setStatus('exito');
       setForm({ nombre: '', email: '', mensaje: '' });
-    } catch {
+    } catch (err) {
+      setErrorMsg(err.response?.data?.error || 'Error al enviar. Intente de nuevo.');
       setStatus('error');
     }
   };
@@ -24,7 +26,7 @@ export default function Contact() {
         <div className="divider" />
         <p className="section-subtitle">Estamos aqui para atenderle. No dude en escribirnos.</p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', marginBottom: '40px' }}>
+        <div className="contact-grid">
           <div>
             <div style={{ marginBottom: '32px' }}>
               <h3 style={{ marginBottom: '8px', fontSize: '1.1rem' }}>Direccion</h3>
@@ -65,6 +67,7 @@ export default function Contact() {
                 <label>Mensaje</label>
                 <textarea
                   rows="4"
+                  maxLength={5000}
                   value={form.mensaje}
                   onChange={e => setForm({ ...form, mensaje: e.target.value })}
                   required
@@ -74,10 +77,10 @@ export default function Contact() {
                 {status === 'enviando' ? 'Enviando...' : 'Enviar Mensaje'}
               </button>
               {status === 'exito' && (
-                <p style={{ color: 'var(--text)', fontSize: '14px', marginTop: '12px' }}>Mensaje enviado con exito.</p>
+                <div className="notice notice-success">Mensaje enviado con exito. Le responderemos pronto.</div>
               )}
               {status === 'error' && (
-                <p style={{ color: 'var(--text-light)', fontSize: '14px', marginTop: '12px' }}>Error al enviar. Intente de nuevo.</p>
+                <div className="notice notice-error">{errorMsg}</div>
               )}
             </form>
           </div>
