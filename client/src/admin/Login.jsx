@@ -87,8 +87,6 @@ export default function Login() {
         {import.meta.env.DEV && (
           <div style={{ marginTop: '32px', fontSize: '12px', color: 'var(--text-lightest)', textAlign: 'center' }}>
             <p style={{ marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Credenciales de prueba</p>
-            <p>dueno@restaurante.com / admin123</p>
-            <p>admin@restaurante.com / admin123</p>
           </div>
         )}
       </div>
