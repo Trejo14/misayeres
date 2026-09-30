@@ -30,15 +30,15 @@ export default function Contact() {
           <div>
             <div style={{ marginBottom: '32px' }}>
               <h3 style={{ marginBottom: '8px', fontSize: '1.1rem' }}>Direccion</h3>
-              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Calle Principal #123, Ciudad</p>
+              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>Av. Juárez 2109, La Paz, 72160 Heroica Puebla de Zaragoza, Pue., Mexico #123, Ciudad</p>
             </div>
             <div style={{ marginBottom: '32px' }}>
               <h3 style={{ marginBottom: '8px', fontSize: '1.1rem' }}>Telefono</h3>
-              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>(123) 456-7890</p>
+              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>222 724 4119</p>
             </div>
             <div style={{ marginBottom: '32px' }}>
               <h3 style={{ marginBottom: '8px', fontSize: '1.1rem' }}>Email</h3>
-              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>info@misayeres.com</p>
+              <p style={{ color: 'var(--text-light)', fontSize: '14px' }}>misayeres@gmail.com</p>
             </div>
           </div>
 

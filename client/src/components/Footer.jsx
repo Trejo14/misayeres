@@ -15,15 +15,13 @@ export default function Footer() {
           </div>
           <div>
             <h4>Horario</h4>
-            <p>Lunes a Viernes: 12:00 - 23:00</p>
-            <p>Sabado: 13:00 - 00:00</p>
-            <p>Domingo: 13:00 - 22:00</p>
+            <p>Martes a Sabado: 9:00 - 00:00</p>
           </div>
           <div>
             <h4>Contacto</h4>
-            <p>Calle Principal #123, Ciudad</p>
-            <p>(123) 456-7890</p>
-            <p>info@misayeres.com</p>
+            <p>Av. Juárez 2109, La Paz, 72160 Heroica Puebla de Zaragoza, Pue., Mexico #123, Ciudad</p>
+            <p>222 724 4119</p>
+            <p>misayeres@gmail.com</p>
           </div>
           <div>
             <h4>Enlaces</h4>
