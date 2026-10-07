@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { formatPrice } from '../utils/format';
 import Carousel from '../components/Carousel';
 
 const DAY_CATS = ['Desayuno', 'Almuerzo'];
@@ -135,12 +134,7 @@ export default function Menu() {
                   </div>
                 )}
                 <div className="card-body">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <h3 style={{ fontSize: '1.1rem' }}>{item.nombre}</h3>
-                    <span style={{ color: 'var(--text)', fontWeight: 600, fontSize: '1.1rem', whiteSpace: 'nowrap', marginLeft: '16px' }}>
-                      {formatPrice(item.precio)}
-                    </span>
-                  </div>
+                  <h3 style={{ fontSize: '1.1rem', marginBottom: '8px' }}>{item.nombre}</h3>
                   <p style={{ color: 'var(--text-light)', fontSize: '14px', marginBottom: '12px', lineHeight: '1.7' }}>{item.descripcion}</p>
                   <span style={{
                     fontSize: '11px',
