@@ -4,7 +4,7 @@ import { Plus, Pencil, Trash2, ImageOff } from 'lucide-react';
 import ImageDropzone from '../components/ImageDropzone';
 import { formatPrice } from '../utils/format';
 
-const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena', 'Bebidas'];
+const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena', 'Postres', 'Bebidas'];
 const EMPTY_FORM = { nombre: '', descripcion: '', precio: '', categoria: 'Desayuno', imagen: '', disponible: 1 };
 
 // Evita que soltar un archivo fuera de la zona haga que el navegador lo abra.

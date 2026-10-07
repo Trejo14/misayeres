@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { formatPrice } from '../utils/format';
+import Carousel from '../components/Carousel';
 
-const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena', 'Bebidas'];
 const DAY_CATS = ['Desayuno', 'Almuerzo'];
 const NIGHT_CATS = ['Comida', 'Cena'];
+const DESSERT_CATS = ['Postres'];
 const DRINK_CATS = ['Bebidas'];
 
 const DAY_COLORS = {
@@ -27,6 +28,17 @@ const NIGHT_COLORS = {
   tagBg: '#37474f',
   tagText: '#b0bec5',
   title: '#eceff1',
+};
+
+const DESSERT_COLORS = {
+  bg: 'linear-gradient(135deg, #fce4ec, #f8bbd0)',
+  headerBg: '#ad1457',
+  headerText: '#ffffff',
+  accent: '#d81b60',
+  cardBorder: '#f48fb1',
+  tagBg: '#fce4ec',
+  tagText: '#ad1457',
+  title: '#880e4f',
 };
 
 const DRINK_COLORS = {
@@ -64,6 +76,7 @@ export default function Menu() {
 
   const dayItems = items.filter(i => DAY_CATS.includes(i.categoria));
   const nightItems = items.filter(i => NIGHT_CATS.includes(i.categoria));
+  const dessertItems = items.filter(i => DESSERT_CATS.includes(i.categoria));
   const drinkItems = items.filter(i => DRINK_CATS.includes(i.categoria));
 
   const renderSection = (title, subtitle, items, colors) => (
@@ -96,19 +109,18 @@ export default function Menu() {
             No hay platillos disponibles en esta seccion.
           </p>
         ) : (
-          <div className="menu-grid">
+          <Carousel label={title}>
             {items.map(item => (
-              <div key={item.id} className="card" style={{ borderColor: colors.cardBorder }}>
+              <div key={item.id} className="card menu-card" style={{ borderColor: colors.cardBorder }}>
                 {item.imagen ? (
                   <img
                     src={item.imagen}
                     alt={item.nombre}
                     loading="lazy"
-                    style={{ width: '100%', height: '180px', objectFit: 'cover', display: 'block' }}
+                    className="menu-card-media"
                   />
                 ) : (
-                  <div style={{
-                    height: '180px',
+                  <div className="menu-card-media" style={{
                     background: `linear-gradient(135deg, ${colors.headerBg}, ${colors.accent})`,
                     display: 'flex',
                     alignItems: 'center',
@@ -145,7 +157,7 @@ export default function Menu() {
                 </div>
               </div>
             ))}
-          </div>
+          </Carousel>
         )}
       </div>
     </div>
@@ -173,6 +185,13 @@ export default function Menu() {
         'Una experiencia gastronomica completa para los momentos mas especiales.',
         nightItems,
         NIGHT_COLORS
+      )}
+
+      {renderSection(
+        'Postres',
+        'Dulces tentaciones elaboradas al momento para cerrar con broche de oro.',
+        dessertItems,
+        DESSERT_COLORS
       )}
 
       {renderSection(
