@@ -26,6 +26,8 @@ export default function Footer() {
           <div>
             <h4>Enlaces</h4>
             <p><Link to="/menu">Menu</Link></p>
+            <p><Link to="/promos">Promos</Link></p>
+            <p><Link to="/noches">Noches Mis Ayeres</Link></p>
             <p><Link to="/reservations">Reservaciones</Link></p>
             <p><Link to="/contact">Contacto</Link></p>
             <p><Link to="/login" style={{ fontSize: '13px', opacity: 0.6 }}>Admin</Link></p>

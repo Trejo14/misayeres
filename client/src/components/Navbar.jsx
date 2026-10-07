@@ -18,6 +18,8 @@ export default function Navbar() {
         <ul className="nav-links">
           <li><Link to="/" style={isActive('/')}>Inicio</Link></li>
           <li><Link to="/menu" style={isActive('/menu')}>Menu</Link></li>
+          <li><Link to="/promos" style={isActive('/promos')}>Promos</Link></li>
+          <li><Link to="/noches" style={isActive('/noches')}>Noches Mis Ayeres</Link></li>
           <li><Link to="/reservations" style={isActive('/reservations')}>Reservaciones</Link></li>
           <li><Link to="/contact" style={isActive('/contact')}>Contacto</Link></li>
           {user && <li><Link to="/admin">Admin</Link></li>}

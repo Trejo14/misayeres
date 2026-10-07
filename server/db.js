@@ -102,6 +102,34 @@ export async function initDB() {
       )
     `);
 
+    // Los videos se piden por rangos; sin compresion TOAST la base puede leer
+    // solo el fragmento pedido en vez del archivo completo.
+    await client.query('ALTER TABLE imagenes ALTER COLUMN datos SET STORAGE EXTERNAL');
+
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS promos (
+        id SERIAL PRIMARY KEY,
+        titulo TEXT NOT NULL,
+        descripcion TEXT,
+        media TEXT NOT NULL,
+        media_tipo TEXT NOT NULL DEFAULT 'imagen' CHECK(media_tipo IN ('imagen', 'video')),
+        activa INTEGER DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Programa de Noches Mis Ayeres: una fila por fecha. Si se borra la promo
+    // asignada, el dia conserva su cantante y su evento.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS noches (
+        fecha DATE PRIMARY KEY,
+        promo_id INTEGER REFERENCES promos(id) ON DELETE SET NULL,
+        cantante TEXT,
+        evento TEXT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Migraciones de quejas: cualquier usuario puede enviarlas, de forma anonima
     // (sin reportero) y sin que sean necesariamente sobre un empleado concreto.
     await client.query('ALTER TABLE quejas ALTER COLUMN reportero_id DROP NOT NULL');

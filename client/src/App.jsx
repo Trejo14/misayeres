@@ -4,12 +4,16 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
+import Promos from './pages/Promos';
+import Noches from './pages/Noches';
 import Contact from './pages/Contact';
 import Reservations from './pages/Reservations';
 import Login from './admin/Login';
 import AdminLayout from './admin/AdminLayout';
 import Dashboard from './admin/Dashboard';
 import MenuManage from './admin/MenuManage';
+import PromosManage from './admin/PromosManage';
+import NochesManage from './admin/NochesManage';
 import ReservationsManage from './admin/ReservationsManage';
 import ClientsManage from './admin/ClientsManage';
 import UsersManage from './admin/UsersManage';
@@ -32,6 +36,8 @@ export default function App() {
         }>
           <Route index element={<Dashboard />} />
           <Route path="menu" element={<ProtectedRoute roles={STAFF}><MenuManage /></ProtectedRoute>} />
+          <Route path="promos" element={<ProtectedRoute roles={STAFF}><PromosManage /></ProtectedRoute>} />
+          <Route path="noches" element={<ProtectedRoute roles={STAFF}><NochesManage /></ProtectedRoute>} />
           <Route path="reservations" element={<ProtectedRoute roles={STAFF}><ReservationsManage /></ProtectedRoute>} />
           <Route path="clients" element={<ClientsManage />} />
           <Route path="users" element={<ProtectedRoute roles={OWNER}><UsersManage /></ProtectedRoute>} />
@@ -44,6 +50,8 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/menu" element={<Menu />} />
+              <Route path="/promos" element={<Promos />} />
+              <Route path="/noches" element={<Noches />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/reservations" element={<Reservations />} />
             </Routes>

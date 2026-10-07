@@ -887,7 +887,8 @@ img.menu-card-media {
   padding: 8px;
 }
 
-.dropzone img {
+.dropzone img,
+.dropzone video {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
@@ -975,4 +976,141 @@ img.menu-card-media {
   .admin-nav button { width: auto; padding: 8px 16px; }
   .navbar .container { flex-wrap: wrap; gap: 8px; }
   .nav-links { gap: 14px; flex-wrap: wrap; }
+}
+
+/* Promos */
+.promo-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.promo-card-media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  background: var(--bg-dark);
+}
+
+/* Noches Mis Ayeres */
+.noches {
+  background: linear-gradient(160deg, #1a1a1a, #2b2b2b);
+  color: var(--white);
+  padding: 60px 0 80px;
+  margin-bottom: -80px;
+}
+
+.noches .section-title { color: var(--white); }
+.noches .section-subtitle { color: rgba(255,255,255,0.6); }
+.noches .divider { background: var(--white); opacity: 0.3; }
+
+.noches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.noche {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  gap: 24px;
+  align-items: center;
+  padding: 20px 24px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.04);
+}
+
+.noche.hoy {
+  border-color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.1);
+}
+
+.noche.vacia { opacity: 0.45; }
+
+.noche-fecha strong {
+  display: block;
+  font-family: 'Playfair Display SC', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.noche-fecha span {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+}
+
+.noche-fecha .noche-hoy {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.noche-sin {
+  grid-column: 2 / -1;
+  font-size: 14px;
+}
+
+.noche-etiqueta {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+
+.noche-dato { margin-bottom: 10px; }
+.noche-dato:last-child { margin-bottom: 0; }
+.noche-dato p { font-size: 1.05rem; }
+
+.noche-promo {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.noche-promo-media {
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #000;
+}
+
+.noche-promo small {
+  display: block;
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.week-nav strong {
+  min-width: 150px;
+  text-align: center;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .noche {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .noche-sin { grid-column: auto; }
 }

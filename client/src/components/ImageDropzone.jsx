@@ -8,6 +8,9 @@ const MAX_SIZE = 5 * 1024 * 1024;
 const MAX_ORIGINAL = 40 * 1024 * 1024;
 const MAX_LADO = 1600;
 const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+// Los videos se suben tal cual, sin procesar.
+const ACCEPTED_VIDEO = ['video/mp4', 'video/webm', 'video/quicktime'];
+const MAX_VIDEO = 50 * 1024 * 1024;
 
 const cargarImagen = async (file) => {
   try {
@@ -52,18 +55,51 @@ const comprimir = async (file) => {
 
 // Campo de imagen: se puede arrastrar un archivo desde el explorador, hacer clic
 // para elegirlo o pegarlo con Ctrl+V. Sube la imagen al servidor y entrega la URL.
-export default function ImageDropzone({ value, onChange }) {
+// Con allowVideo tambien acepta videos; onChange recibe la URL y el tipo
+// ('imagen' o 'video'), y `tipo` indica como mostrar el archivo actual.
+export default function ImageDropzone({ value, onChange, allowVideo = false, tipo = 'imagen' }) {
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(null);
   const [error, setError] = useState('');
+
+  const uploadVideo = async (file) => {
+    if (file.size > MAX_VIDEO) {
+      setError('El video no puede pesar mas de 50 MB.');
+      return;
+    }
+
+    setUploading(true);
+    setProgress(0);
+    try {
+      const data = new FormData();
+      data.append('video', file);
+      const res = await axios.post('/api/images/video', data, {
+        onUploadProgress: e => { if (e.total) setProgress(Math.round((e.loaded / e.total) * 100)); },
+      });
+      onChange(res.data.url, 'video');
+    } catch (err) {
+      setError(err.response?.data?.error || 'No se pudo subir el video.');
+    } finally {
+      setUploading(false);
+      setProgress(null);
+    }
+  };
 
   const upload = async (file) => {
     if (!file) return;
     setError('');
 
+    if (allowVideo && ACCEPTED_VIDEO.includes(file.type)) {
+      await uploadVideo(file);
+      return;
+    }
+
     if (!ACCEPTED.includes(file.type)) {
-      setError('Formato no permitido. Usa JPG, PNG, WEBP o GIF.');
+      setError(allowVideo
+        ? 'Formato no permitido. Usa JPG, PNG, WEBP, GIF, MP4, WEBM o MOV.'
+        : 'Formato no permitido. Usa JPG, PNG, WEBP o GIF.');
       return;
     }
     if (file.size > MAX_ORIGINAL) {
@@ -90,7 +126,7 @@ export default function ImageDropzone({ value, onChange }) {
       const data = new FormData();
       data.append('imagen', listo);
       const res = await axios.post('/api/images', data);
-      onChange(res.data.url);
+      onChange(res.data.url, 'imagen');
     } catch (err) {
       setError(err.response?.data?.error || 'No se pudo subir la imagen.');
     } finally {
@@ -115,7 +151,7 @@ export default function ImageDropzone({ value, onChange }) {
   };
 
   const handlePaste = (e) => {
-    const file = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith('image/'));
+    const file = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith('image/') || (allowVideo && f.type.startsWith('video/')));
     if (file) {
       e.preventDefault();
       upload(file);
@@ -138,11 +174,15 @@ export default function ImageDropzone({ value, onChange }) {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onPaste={handlePaste}
-        aria-label="Subir imagen del platillo"
+        aria-label={allowVideo ? 'Subir foto o video' : 'Subir imagen del platillo'}
       >
         {value ? (
           <>
-            <img src={value} alt="Vista previa del platillo" />
+            {tipo === 'video' ? (
+              <video src={value} controls muted playsInline preload="metadata" />
+            ) : (
+              <img src={value} alt={allowVideo ? 'Vista previa' : 'Vista previa del platillo'} />
+            )}
             <div className="dropzone-actions">
               <button type="button" className="btn btn-sm btn-outline" onClick={openPicker} disabled={uploading}>
                 <RefreshCw size={14} strokeWidth={1.5} /> Cambiar
@@ -155,20 +195,23 @@ export default function ImageDropzone({ value, onChange }) {
         ) : (
           <>
             <ImagePlus size={28} strokeWidth={1.25} style={{ marginBottom: '8px', opacity: 0.6 }} />
-            <p><strong>Arrastra una imagen aqui</strong></p>
+            <p><strong>{allowVideo ? 'Arrastra una foto o un video aqui' : 'Arrastra una imagen aqui'}</strong></p>
             <p style={{ fontSize: '13px' }}>o haz clic para elegir un archivo &middot; JPG, PNG, WEBP o GIF hasta 40 MB</p>
+            {allowVideo && <p style={{ fontSize: '13px' }}>Videos MP4, WEBM o MOV hasta 50 MB</p>}
           </>
         )}
         {(uploading || (dragging && value)) && (
           <div className="dropzone-overlay">
-            {uploading ? 'Procesando y subiendo imagen...' : 'Suelta para reemplazar'}
+            {!uploading ? 'Suelta para reemplazar'
+              : progress === null ? 'Procesando y subiendo imagen...'
+              : `Subiendo video... ${progress}%`}
           </div>
         )}
       </div>
       <input
         ref={inputRef}
         type="file"
-        accept={ACCEPTED.join(',')}
+        accept={(allowVideo ? [...ACCEPTED, ...ACCEPTED_VIDEO] : ACCEPTED).join(',')}
         style={{ display: 'none' }}
         onChange={e => { upload(e.target.files?.[0]); e.target.value = ''; }}
       />

@@ -5,6 +5,8 @@ import logo from '../assets/logo.png';
 import {
   LayoutDashboard,
   UtensilsCrossed,
+  Megaphone,
+  Moon,
   CalendarDays,
   Contact,
   Users,
@@ -21,6 +23,8 @@ const STAFF = ['dueno', 'admin'];
 const NAV_ITEMS = [
   { path: '/admin', label: 'Dashboard', icon: LayoutDashboard, roles: ALL, end: true },
   { path: '/admin/menu', label: 'Menu', icon: UtensilsCrossed, roles: STAFF },
+  { path: '/admin/promos', label: 'Promos', icon: Megaphone, roles: STAFF },
+  { path: '/admin/noches', label: 'Noches Mis Ayeres', icon: Moon, roles: STAFF },
   { path: '/admin/reservations', label: 'Reservas', icon: CalendarDays, roles: STAFF },
   { path: '/admin/clients', label: 'Clientes', icon: Contact, roles: ALL },
   { path: '/admin/users', label: 'Usuarios', icon: Users, roles: ['dueno'] },

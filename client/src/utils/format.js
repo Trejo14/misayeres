@@ -29,10 +29,39 @@ export function formatPrice(value) {
   return `$${parseFloat(value || 0).toFixed(2)}`;
 }
 
-export function todayISO() {
-  const d = new Date();
+function toISO(d) {
   const pad = (n) => String(n).padStart(2, '0');
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+export function todayISO() {
+  return toISO(new Date());
+}
+
+export function addDays(iso, days) {
+  const d = new Date(`${iso}T00:00:00`);
+  d.setDate(d.getDate() + days);
+  return toISO(d);
+}
+
+// Lunes de la semana a la que pertenece la fecha.
+export function weekStartISO(iso = todayISO()) {
+  const d = new Date(`${iso}T00:00:00`);
+  return addDays(iso, -((d.getDay() + 6) % 7));
+}
+
+// Las 7 fechas de la semana que empieza en `desde`.
+export function weekDays(desde) {
+  return Array.from({ length: 7 }, (_, i) => addDays(desde, i));
+}
+
+export function formatWeekday(iso) {
+  const nombre = new Date(`${iso}T00:00:00`).toLocaleDateString('es-MX', { weekday: 'long' });
+  return nombre.charAt(0).toUpperCase() + nombre.slice(1);
+}
+
+export function formatDayMonth(iso) {
+  return new Date(`${iso}T00:00:00`).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
 }
 
 export const ROLE_LABELS = { dueno: 'Dueño', admin: 'Administrador', empleado: 'Empleado' };

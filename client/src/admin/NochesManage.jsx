@@ -1,0 +1,175 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { ChevronLeft, ChevronRight, Copy, Pencil } from 'lucide-react';
+import { addDays, weekStartISO, weekDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
+
+const EMPTY_FORM = { promo_id: '', cantante: '', evento: '' };
+
+export default function NochesManage() {
+  const semanaActual = weekStartISO();
+  const [desde, setDesde] = useState(semanaActual);
+  const [dias, setDias] = useState({});
+  const [promos, setPromos] = useState([]);
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [saving, setSaving] = useState(false);
+  const [copying, setCopying] = useState(false);
+
+  const loadDias = () => {
+    axios.get('/api/noches', { params: { desde } })
+      .then(res => setDias(Object.fromEntries(res.data.map(d => [d.fecha, d]))))
+      .catch(console.error);
+  };
+
+  useEffect(loadDias, [desde]);
+
+  useEffect(() => {
+    axios.get('/api/promos/all')
+      .then(res => setPromos(res.data))
+      .catch(console.error);
+  }, []);
+
+  const openEdit = (fecha) => {
+    const dia = dias[fecha];
+    setEditing(fecha);
+    setForm({
+      promo_id: dia?.promo_id || '',
+      cantante: dia?.cantante || '',
+      evento: dia?.evento || '',
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await axios.put(`/api/noches/${editing}`, form);
+      setEditing(null);
+      loadDias();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Error al guardar');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const copiarAnterior = async () => {
+    setCopying(true);
+    try {
+      const res = await axios.post('/api/noches/copiar', { desde: addDays(desde, -7), hacia: desde });
+      if (res.data.copiados === 0) {
+        alert('No habia nada que copiar: la semana anterior esta vacia o esta semana ya tiene todos esos dias llenos.');
+      }
+      loadDias();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Error al copiar');
+    } finally {
+      setCopying(false);
+    }
+  };
+
+  const hoy = todayISO();
+  const nombrePromo = (id) => {
+    const promo = promos.find(p => p.id === id);
+    if (!promo) return '-';
+    return promo.activa ? promo.titulo : `${promo.titulo} (inactiva)`;
+  };
+
+  return (
+    <div>
+      <div className="admin-header">
+        <h1>Noches Mis Ayeres</h1>
+        <div className="week-nav">
+          <button className="btn btn-sm btn-outline" onClick={() => setDesde(addDays(desde, -7))} aria-label="Semana anterior">
+            <ChevronLeft size={14} strokeWidth={1.5} />
+          </button>
+          <strong>{formatDayMonth(desde)} &ndash; {formatDayMonth(addDays(desde, 6))}</strong>
+          <button className="btn btn-sm btn-outline" onClick={() => setDesde(addDays(desde, 7))} aria-label="Semana siguiente">
+            <ChevronRight size={14} strokeWidth={1.5} />
+          </button>
+          {desde !== semanaActual && (
+            <button className="btn btn-sm btn-outline" onClick={() => setDesde(semanaActual)}>Semana actual</button>
+          )}
+          <button className="btn btn-sm btn-primary" onClick={copiarAnterior} disabled={copying}>
+            <Copy size={14} strokeWidth={1.5} /> {copying ? 'Copiando...' : 'Copiar semana anterior'}
+          </button>
+        </div>
+      </div>
+
+      <p className="form-hint" style={{ marginBottom: '16px' }}>
+        El sitio muestra siempre la semana en curso (lunes a domingo) y cambia sola cada lunes.
+        Puedes adelantar las semanas siguientes desde aqui. "Copiar semana anterior" solo llena los dias vacios.
+      </p>
+
+      <div className="admin-card" style={{ padding: 0, overflow: 'auto' }}>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Dia</th>
+              <th>Promo del dia</th>
+              <th>Cantante</th>
+              <th>Evento</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {weekDays(desde).map(fecha => {
+              const dia = dias[fecha];
+              return (
+                <tr key={fecha}>
+                  <td>
+                    <strong>{formatWeekday(fecha)}</strong> {formatDayMonth(fecha)}
+                    {fecha === hoy && <span className="badge badge-vip" style={{ marginLeft: '8px' }}>Hoy</span>}
+                  </td>
+                  <td>{dia?.promo_id ? nombrePromo(dia.promo_id) : '-'}</td>
+                  <td>{dia?.cantante || '-'}</td>
+                  <td>{dia?.evento || '-'}</td>
+                  <td>
+                    <button className="btn btn-sm btn-outline" onClick={() => openEdit(fecha)}>
+                      <Pencil size={14} strokeWidth={1.5} /> Editar
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {editing && (
+        <div className="modal-overlay" onClick={() => setEditing(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h2>{formatWeekday(editing)} {formatDayMonth(editing)}</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Promo del dia</label>
+                <select value={form.promo_id} onChange={e => setForm({ ...form, promo_id: e.target.value })}>
+                  <option value="">Sin promo</option>
+                  {promos.map(p => (
+                    <option key={p.id} value={p.id}>{p.activa ? p.titulo : `${p.titulo} (inactiva)`}</option>
+                  ))}
+                </select>
+                {promos.length === 0 && <p className="form-hint">Primero sube promos en la seccion Promos.</p>}
+              </div>
+              <div className="form-group">
+                <label>Cantante</label>
+                <input value={form.cantante} maxLength={120} onChange={e => setForm({ ...form, cantante: e.target.value })} />
+              </div>
+              <div className="form-group">
+                <label>Evento</label>
+                <input value={form.evento} maxLength={160} onChange={e => setForm({ ...form, evento: e.target.value })} />
+              </div>
+              <p className="form-hint">Deja todo vacio para quitar el programa de este dia.</p>
+              <div className="form-actions">
+                <button type="button" className="btn btn-outline" onClick={() => setEditing(null)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary" disabled={saving}>
+                  {saving ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
