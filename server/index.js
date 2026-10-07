@@ -14,6 +14,7 @@ import contactRoutes from './routes/contact.js';
 import imagesRoutes from './routes/images.js';
 import promosRoutes from './routes/promos.js';
 import nochesRoutes from './routes/noches.js';
+import cantantesRoutes from './routes/cantantes.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -35,6 +36,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/promos', promosRoutes);
 app.use('/api/noches', nochesRoutes);
+app.use('/api/cantantes', cantantesRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });

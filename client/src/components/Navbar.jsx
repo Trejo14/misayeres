@@ -1,9 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import logo from '../assets/logo.png';
 
 export default function Navbar() {
-  const { user } = useAuth();
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path ? { color: '#1a1a1a' } : {};
@@ -22,7 +20,6 @@ export default function Navbar() {
           <li><Link to="/noches" style={isActive('/noches')}>Noches Mis Ayeres</Link></li>
           <li><Link to="/reservations" style={isActive('/reservations')}>Reservaciones</Link></li>
           <li><Link to="/contact" style={isActive('/contact')}>Contacto</Link></li>
-          {user && <li><Link to="/admin">Admin</Link></li>}
         </ul>
       </div>
     </nav>

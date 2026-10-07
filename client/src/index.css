@@ -1114,3 +1114,51 @@ img.menu-card-media {
   }
   .noche-sin { grid-column: auto; }
 }
+
+.noche-cantante {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.noche-cantante img {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Redes sociales del pie de pagina */
+.footer-social {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.footer-social a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.footer-social a:hover {
+  border-color: var(--white);
+}
+
+.select-with-action {
+  display: flex;
+  gap: 8px;
+}
+
+.select-with-action select { flex: 1; min-width: 0; }
+.select-with-action .btn { flex-shrink: 0; white-space: nowrap; }
+
+.thumb-round { border-radius: 50%; }

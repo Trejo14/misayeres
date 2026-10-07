@@ -27,13 +27,14 @@ const uploadVideo = crearUpload(VIDEOS_PERMITIDOS, MAX_VIDEO);
 
 const IMAGE_URL = /^\/api\/images\/(\d+)$/;
 
-// Borra un archivo subido si la URL apunta a uno y ya no lo usa ningun platillo ni promo.
+// Borra un archivo subido si la URL apunta a uno y ya no lo usa ningun platillo, promo ni cantante.
 export async function deleteImageIfUnused(url) {
   const match = IMAGE_URL.exec(url || '');
   if (!match) return;
   const uses = await query(
     `SELECT (SELECT COUNT(*) FROM platillos WHERE imagen = $1)::int
-          + (SELECT COUNT(*) FROM promos WHERE media = $1)::int AS total`,
+          + (SELECT COUNT(*) FROM promos WHERE media = $1)::int
+          + (SELECT COUNT(*) FROM cantantes WHERE foto = $1)::int AS total`,
     [url]
   );
   if (uses[0].total === 0) {

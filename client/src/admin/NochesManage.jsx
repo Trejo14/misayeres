@@ -1,23 +1,41 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ChevronLeft, ChevronRight, Copy, Pencil } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Copy, Pencil, Plus, Trash2, User } from 'lucide-react';
+import ImageDropzone from '../components/ImageDropzone';
 import { addDays, weekStartISO, weekDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
 
-const EMPTY_FORM = { promo_id: '', cantante: '', evento: '' };
+const EMPTY_FORM = { promo_id: '', cantante_id: '', evento: '' };
+const EMPTY_CANTANTE = { nombre: '', foto: '' };
+
+// Evita que soltar un archivo fuera de la zona haga que el navegador lo abra.
+const blockFileDrop = (e) => {
+  if (e.dataTransfer?.types?.includes('Files')) e.preventDefault();
+};
 
 export default function NochesManage() {
   const semanaActual = weekStartISO();
   const [desde, setDesde] = useState(semanaActual);
   const [dias, setDias] = useState({});
   const [promos, setPromos] = useState([]);
+  const [cantantes, setCantantes] = useState([]);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [copying, setCopying] = useState(false);
+  // Modal de cantante: null cerrado, {} nuevo, o el cantante que se edita.
+  const [cantanteModal, setCantanteModal] = useState(null);
+  const [cantanteForm, setCantanteForm] = useState(EMPTY_CANTANTE);
+  const [savingCantante, setSavingCantante] = useState(false);
 
   const loadDias = () => {
     axios.get('/api/noches', { params: { desde } })
       .then(res => setDias(Object.fromEntries(res.data.map(d => [d.fecha, d]))))
+      .catch(console.error);
+  };
+
+  const loadCantantes = () => {
+    axios.get('/api/cantantes')
+      .then(res => setCantantes(res.data))
       .catch(console.error);
   };
 
@@ -27,6 +45,7 @@ export default function NochesManage() {
     axios.get('/api/promos/all')
       .then(res => setPromos(res.data))
       .catch(console.error);
+    loadCantantes();
   }, []);
 
   const openEdit = (fecha) => {
@@ -34,7 +53,7 @@ export default function NochesManage() {
     setEditing(fecha);
     setForm({
       promo_id: dia?.promo_id || '',
-      cantante: dia?.cantante || '',
+      cantante_id: dia?.cantante_id || '',
       evento: dia?.evento || '',
     });
   };
@@ -68,12 +87,57 @@ export default function NochesManage() {
     }
   };
 
+  const openCantante = (cantante = {}) => {
+    setCantanteModal(cantante);
+    setCantanteForm({ nombre: cantante.nombre || '', foto: cantante.foto || '' });
+  };
+
+  const handleCantanteSubmit = async (e) => {
+    e.preventDefault();
+    setSavingCantante(true);
+    try {
+      if (cantanteModal.id) {
+        await axios.put(`/api/cantantes/${cantanteModal.id}`, cantanteForm);
+      } else {
+        const res = await axios.post('/api/cantantes', cantanteForm);
+        // Si se creo desde el dia que se esta editando, queda elegido.
+        if (editing) setForm(f => ({ ...f, cantante_id: res.data.id }));
+      }
+      setCantanteModal(null);
+      loadCantantes();
+      loadDias();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Error al guardar');
+    } finally {
+      setSavingCantante(false);
+    }
+  };
+
+  const handleCantanteDelete = async (cantante) => {
+    if (!confirm(`¿Eliminar a "${cantante.nombre}"? Tambien se quitara de los dias donde este asignado.`)) return;
+    try {
+      await axios.delete(`/api/cantantes/${cantante.id}`);
+      loadCantantes();
+      loadDias();
+    } catch {
+      alert('Error al eliminar');
+    }
+  };
+
   const hoy = todayISO();
   const nombrePromo = (id) => {
     const promo = promos.find(p => p.id === id);
     if (!promo) return '-';
     return promo.activa ? promo.titulo : `${promo.titulo} (inactiva)`;
   };
+
+  const fotoCantante = (foto) => foto ? (
+    <img className="thumb thumb-round" src={foto} alt="" loading="lazy" />
+  ) : (
+    <div className="thumb thumb-round" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-lightest)' }}>
+      <User size={18} strokeWidth={1.5} />
+    </div>
+  );
 
   return (
     <div>
@@ -136,6 +200,46 @@ export default function NochesManage() {
         </table>
       </div>
 
+      <div className="admin-header" style={{ marginTop: '40px', marginBottom: '16px' }}>
+        <h1 style={{ fontSize: '1.3rem' }}>Cantantes</h1>
+        <button className="btn btn-primary" onClick={() => openCantante()}>
+          <Plus size={16} strokeWidth={2} /> Nuevo Cantante
+        </button>
+      </div>
+
+      <div className="admin-card" style={{ padding: 0, overflow: 'auto' }}>
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th style={{ width: '60px' }}>Foto</th>
+              <th>Nombre</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cantantes.map(cantante => (
+              <tr key={cantante.id}>
+                <td>{fotoCantante(cantante.foto)}</td>
+                <td>{cantante.nombre}</td>
+                <td>
+                  <div className="table-actions">
+                    <button className="btn btn-sm btn-outline" onClick={() => openCantante(cantante)}>
+                      <Pencil size={14} strokeWidth={1.5} /> Editar
+                    </button>
+                    <button className="btn btn-sm btn-danger" onClick={() => handleCantanteDelete(cantante)}>
+                      <Trash2 size={14} strokeWidth={1.5} /> Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {cantantes.length === 0 && (
+              <tr><td colSpan="3" className="empty-row">No hay cantantes registrados</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
       {editing && (
         <div className="modal-overlay" onClick={() => setEditing(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
@@ -153,7 +257,15 @@ export default function NochesManage() {
               </div>
               <div className="form-group">
                 <label>Cantante</label>
-                <input value={form.cantante} maxLength={120} onChange={e => setForm({ ...form, cantante: e.target.value })} />
+                <div className="select-with-action">
+                  <select value={form.cantante_id} onChange={e => setForm({ ...form, cantante_id: e.target.value })}>
+                    <option value="">Sin cantante</option>
+                    {cantantes.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                  </select>
+                  <button type="button" className="btn btn-sm btn-outline" onClick={() => openCantante()}>
+                    <Plus size={14} strokeWidth={1.5} /> Nuevo cantante
+                  </button>
+                </div>
               </div>
               <div className="form-group">
                 <label>Evento</label>
@@ -164,6 +276,30 @@ export default function NochesManage() {
                 <button type="button" className="btn btn-outline" onClick={() => setEditing(null)}>Cancelar</button>
                 <button type="submit" className="btn btn-primary" disabled={saving}>
                   {saving ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {cantanteModal && (
+        <div className="modal-overlay" onClick={() => setCantanteModal(null)} onDragOver={blockFileDrop} onDrop={blockFileDrop}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h2>{cantanteModal.id ? 'Editar Cantante' : 'Nuevo Cantante'}</h2>
+            <form onSubmit={handleCantanteSubmit}>
+              <div className="form-group">
+                <label>Foto (opcional)</label>
+                <ImageDropzone value={cantanteForm.foto} onChange={foto => setCantanteForm(f => ({ ...f, foto }))} />
+              </div>
+              <div className="form-group">
+                <label>Nombre</label>
+                <input value={cantanteForm.nombre} maxLength={120} onChange={e => setCantanteForm({ ...cantanteForm, nombre: e.target.value })} required />
+              </div>
+              <div className="form-actions">
+                <button type="button" className="btn btn-outline" onClick={() => setCantanteModal(null)}>Cancelar</button>
+                <button type="submit" className="btn btn-primary" disabled={savingCantante}>
+                  {savingCantante ? 'Guardando...' : cantanteModal.id ? 'Actualizar' : 'Crear'}
                 </button>
               </div>
             </form>

@@ -130,6 +130,30 @@ export async function initDB() {
       )
     `);
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS cantantes (
+        id SERIAL PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        foto TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // El cantante del dia antes era texto libre; ahora se elige del catalogo.
+    // Los nombres que ya estaban escritos se pasan al catalogo una sola vez.
+    await client.query('ALTER TABLE noches ADD COLUMN IF NOT EXISTS cantante_id INTEGER REFERENCES cantantes(id) ON DELETE SET NULL');
+    await client.query(`
+      INSERT INTO cantantes (nombre)
+      SELECT DISTINCT n.cantante FROM noches n
+       WHERE n.cantante_id IS NULL AND n.cantante <> ''
+         AND NOT EXISTS (SELECT 1 FROM cantantes c WHERE c.nombre = n.cantante)
+    `);
+    await client.query(`
+      UPDATE noches n SET cantante_id = c.id, cantante = ''
+        FROM cantantes c
+       WHERE n.cantante_id IS NULL AND n.cantante <> '' AND c.nombre = n.cantante
+    `);
+
     // Migraciones de quejas: cualquier usuario puede enviarlas, de forma anonima
     // (sin reportero) y sin que sean necesariamente sobre un empleado concreto.
     await client.query('ALTER TABLE quejas ALTER COLUMN reportero_id DROP NOT NULL');

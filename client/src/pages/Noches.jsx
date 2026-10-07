@@ -55,7 +55,10 @@ export default function Noches() {
                         {dia.cantante && (
                           <div className="noche-dato">
                             <span className="noche-etiqueta">Cantante</span>
-                            <p>{dia.cantante}</p>
+                            <div className="noche-cantante">
+                              {dia.cantante_foto && <img src={dia.cantante_foto} alt="" loading="lazy" />}
+                              <p>{dia.cantante}</p>
+                            </div>
                           </div>
                         )}
                       </div>

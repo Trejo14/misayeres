@@ -12,6 +12,7 @@ function fechaValida(valor) {
 
 // Programa de los 7 dias que empiezan en `desde`. La promo solo se incluye
 // si sigue activa; promo_id se envia siempre para que el panel la muestre.
+// `cantante` es el nombre del cantante elegido del catalogo.
 router.get('/', async (req, res) => {
   try {
     const { desde } = req.query;
@@ -20,11 +21,13 @@ router.get('/', async (req, res) => {
     }
 
     const items = await query(
-      `SELECT n.fecha, n.promo_id, n.cantante, n.evento,
+      `SELECT n.fecha, n.promo_id, n.cantante_id, n.evento,
+              c.nombre AS cantante, c.foto AS cantante_foto,
               p.titulo AS promo_titulo, p.descripcion AS promo_descripcion,
               p.media AS promo_media, p.media_tipo AS promo_media_tipo
          FROM noches n
          LEFT JOIN promos p ON p.id = n.promo_id AND p.activa = 1
+         LEFT JOIN cantantes c ON c.id = n.cantante_id
         WHERE n.fecha BETWEEN $1::date AND $1::date + 6
         ORDER BY n.fecha`,
       [desde]
@@ -45,8 +48,8 @@ router.post('/copiar', authMiddleware, roleMiddleware('dueno', 'admin'), async (
     }
 
     const result = await run(
-      `INSERT INTO noches (fecha, promo_id, cantante, evento)
-       SELECT fecha + ($2::date - $1::date), promo_id, cantante, evento
+      `INSERT INTO noches (fecha, promo_id, cantante_id, evento)
+       SELECT fecha + ($2::date - $1::date), promo_id, cantante_id, evento
          FROM noches
         WHERE fecha BETWEEN $1::date AND $1::date + 6
        ON CONFLICT (fecha) DO NOTHING`,
@@ -67,12 +70,17 @@ router.put('/:fecha', authMiddleware, roleMiddleware('dueno', 'admin'), async (r
       return res.status(400).json({ error: 'Fecha inválida' });
     }
 
-    const cantante = (req.body.cantante || '').trim();
     const evento = (req.body.evento || '').trim();
     const promoId = req.body.promo_id ? parseInt(req.body.promo_id) : null;
+    const cantanteId = req.body.cantante_id ? parseInt(req.body.cantante_id) : null;
 
-    if (cantante.length > 120 || evento.length > 160) {
+    if (evento.length > 160) {
       return res.status(400).json({ error: 'El texto es demasiado largo' });
+    }
+    if (cantanteId !== null) {
+      if (Number.isNaN(cantanteId)) return res.status(400).json({ error: 'Cantante inválido' });
+      const cantante = await query('SELECT id FROM cantantes WHERE id = $1', [cantanteId]);
+      if (cantante.length === 0) return res.status(400).json({ error: 'El cantante ya no existe' });
     }
     if (promoId !== null) {
       if (Number.isNaN(promoId)) return res.status(400).json({ error: 'Promo inválida' });
@@ -81,17 +89,17 @@ router.put('/:fecha', authMiddleware, roleMiddleware('dueno', 'admin'), async (r
     }
 
     // Un dia sin nada asignado no ocupa fila.
-    if (!cantante && !evento && promoId === null) {
+    if (cantanteId === null && !evento && promoId === null) {
       await run('DELETE FROM noches WHERE fecha = $1', [fecha]);
       return res.json({ message: 'Día vaciado' });
     }
 
     await run(
-      `INSERT INTO noches (fecha, promo_id, cantante, evento) VALUES ($1, $2, $3, $4)
+      `INSERT INTO noches (fecha, promo_id, cantante_id, evento) VALUES ($1, $2, $3, $4)
        ON CONFLICT (fecha) DO UPDATE
-         SET promo_id = EXCLUDED.promo_id, cantante = EXCLUDED.cantante,
+         SET promo_id = EXCLUDED.promo_id, cantante_id = EXCLUDED.cantante_id,
              evento = EXCLUDED.evento, updated_at = CURRENT_TIMESTAMP`,
-      [fecha, promoId, cantante, evento]
+      [fecha, promoId, cantanteId, evento]
     );
 
     res.json({ message: 'Día actualizado' });
