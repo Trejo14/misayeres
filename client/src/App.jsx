@@ -35,7 +35,7 @@ export default function App() {
           </ProtectedRoute>
         }>
           <Route index element={<Dashboard />} />
-          <Route path="menu" element={<ProtectedRoute roles={STAFF}><MenuManage /></ProtectedRoute>} />
+          <Route path="menu" element={<MenuManage />} />
           <Route path="promos" element={<ProtectedRoute roles={STAFF}><PromosManage /></ProtectedRoute>} />
           <Route path="noches" element={<ProtectedRoute roles={STAFF}><NochesManage /></ProtectedRoute>} />
           <Route path="reservations" element={<ProtectedRoute roles={STAFF}><ReservationsManage /></ProtectedRoute>} />

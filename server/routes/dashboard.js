@@ -4,19 +4,27 @@ import { authMiddleware, roleMiddleware } from '../middlewares/auth.js';
 
 const router = Router();
 
+// El servidor de base de datos corre en UTC; la fecha y hora de las reservas
+// se comparan contra la hora local del restaurante.
+const ZONA = process.env.ZONA_HORARIA || 'America/Mexico_City';
+const AHORA = `(NOW() AT TIME ZONE '${ZONA}')`;
+const HOY = `${AHORA}::date`;
+
 router.get('/stats', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
   try {
     const count = async (sql) => parseInt((await query(sql))[0].count);
     const esDueno = req.user.rol === 'dueno';
 
     const [
-      totalPlatillos, totalReservas, reservasHoy, reservasSemana, totalEmpleados,
+      totalPlatillos, totalReservas, reservasPasadas, reservasHoy, reservasSemana, totalEmpleados,
       totalQuejas, quejasAbiertas, totalContactos, contactosNoLeidos, totalClientes, clientesVIP,
     ] = await Promise.all([
       count('SELECT COUNT(*) as count FROM platillos'),
-      count('SELECT COUNT(*) as count FROM reservas'),
-      count('SELECT COUNT(*) as count FROM reservas WHERE fecha = CURRENT_DATE'),
-      count("SELECT COUNT(*) as count FROM reservas WHERE fecha BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '7 days'"),
+      // Una reserva cuya fecha y hora ya pasaron se cuenta aparte, como pasada.
+      count(`SELECT COUNT(*) as count FROM reservas WHERE fecha + hora >= ${AHORA}`),
+      count(`SELECT COUNT(*) as count FROM reservas WHERE fecha + hora < ${AHORA}`),
+      count(`SELECT COUNT(*) as count FROM reservas WHERE fecha = ${HOY}`),
+      count(`SELECT COUNT(*) as count FROM reservas WHERE fecha BETWEEN ${HOY} AND ${HOY} + INTERVAL '7 days'`),
       count("SELECT COUNT(*) as count FROM usuarios WHERE rol IN ('admin','empleado')"),
       count('SELECT COUNT(*) as count FROM quejas'),
       count("SELECT COUNT(*) as count FROM quejas WHERE estado IN ('abierta','investigando')"),
@@ -44,7 +52,7 @@ router.get('/stats', authMiddleware, roleMiddleware('dueno', 'admin'), async (re
     const reservasProximas = await query(`
       SELECT id, nombre_cliente, telefono, fecha, hora, personas, estado
       FROM reservas
-      WHERE fecha >= CURRENT_DATE AND estado IN ('pendiente', 'confirmada')
+      WHERE fecha + hora >= ${AHORA} AND estado IN ('pendiente', 'confirmada')
       ORDER BY fecha, hora
       LIMIT 6
     `);
@@ -63,6 +71,7 @@ router.get('/stats', authMiddleware, roleMiddleware('dueno', 'admin'), async (re
     const stats = {
       totalPlatillos,
       totalReservas,
+      reservasPasadas,
       reservasHoy,
       reservasSemana,
       totalEmpleados,

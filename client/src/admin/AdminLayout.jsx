@@ -22,7 +22,7 @@ const STAFF = ['dueno', 'admin'];
 // Cada seccion solo aparece para los roles que el servidor deja usarla.
 const NAV_ITEMS = [
   { path: '/admin', label: 'Dashboard', icon: LayoutDashboard, roles: ALL, end: true },
-  { path: '/admin/menu', label: 'Menu', icon: UtensilsCrossed, roles: STAFF },
+  { path: '/admin/menu', label: 'Menu', icon: UtensilsCrossed, roles: ALL },
   { path: '/admin/promos', label: 'Promos', icon: Megaphone, roles: STAFF },
   { path: '/admin/noches', label: 'Noches Mis Ayeres', icon: Moon, roles: STAFF },
   { path: '/admin/reservations', label: 'Reservas', icon: CalendarDays, roles: STAFF },

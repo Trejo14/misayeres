@@ -55,6 +55,7 @@ export default function Dashboard() {
   const statCards = [
     { label: 'Platillos', value: stats?.totalPlatillos ?? '--', icon: UtensilsCrossed },
     { label: 'Reservas Totales', value: stats?.totalReservas ?? '--', icon: CalendarDays },
+    { label: 'Reservas Pasadas', value: stats?.reservasPasadas ?? '--', icon: CalendarDays },
     { label: 'Reservas Hoy', value: stats?.reservasHoy ?? '--', icon: CalendarDays },
     { label: 'Reservas 7 Dias', value: stats?.reservasSemana ?? '--', icon: CalendarClock },
     { label: 'Clientes', value: stats?.totalClientes ?? '--', icon: Users },

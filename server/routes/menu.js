@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/all', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
+router.get('/all', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'), async (req, res) => {
   try {
     const items = await query('SELECT * FROM platillos ORDER BY categoria, nombre');
     res.json(items);
@@ -48,7 +48,7 @@ router.get('/all', authMiddleware, roleMiddleware('dueno', 'admin'), async (req,
   }
 });
 
-router.post('/', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
+router.post('/', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'), async (req, res) => {
   try {
     const { nombre, descripcion, precio, categoria, imagen, disponible } = req.body;
 
@@ -67,7 +67,7 @@ router.post('/', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, r
   }
 });
 
-router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
+router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'), async (req, res) => {
   try {
     const { nombre, descripcion, precio, categoria, imagen, disponible } = req.body;
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Pencil, Trash2, ImageOff } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import ImageDropzone from '../components/ImageDropzone';
 import { formatPrice } from '../utils/format';
 
@@ -20,6 +21,8 @@ export default function MenuManage() {
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
   const [filterCat, setFilterCat] = useState('');
+  const { user } = useAuth();
+  const canDelete = ['dueno', 'admin'].includes(user?.rol);
 
   const loadItems = () => {
     axios.get('/api/menu/all')
@@ -151,9 +154,11 @@ export default function MenuManage() {
                     <button className="btn btn-sm btn-outline" onClick={() => openEdit(item)}>
                       <Pencil size={14} strokeWidth={1.5} /> Editar
                     </button>
-                    <button className="btn btn-sm btn-danger" onClick={() => handleDelete(item)}>
-                      <Trash2 size={14} strokeWidth={1.5} /> Eliminar
-                    </button>
+                    {canDelete && (
+                      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(item)}>
+                        <Trash2 size={14} strokeWidth={1.5} /> Eliminar
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>

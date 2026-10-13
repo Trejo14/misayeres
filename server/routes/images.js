@@ -73,7 +73,7 @@ const guardar = (subida, campo, mensajes) => (req, res) => {
   });
 };
 
-router.post('/', authMiddleware, roleMiddleware('dueno', 'admin'), guardar(upload, 'imagen', {
+router.post('/', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'), guardar(upload, 'imagen', {
   peso: 'La imagen no puede pesar mas de 5 MB',
   tipo: 'Formato no permitido. Usa JPG, PNG, WEBP o GIF',
   subir: 'Error al subir la imagen',
