@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import EventosPopup from './components/EventosPopup';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Promos from './pages/Promos';
@@ -13,6 +14,7 @@ import AdminLayout from './admin/AdminLayout';
 import Dashboard from './admin/Dashboard';
 import MenuManage from './admin/MenuManage';
 import PromosManage from './admin/PromosManage';
+import EventosManage from './admin/EventosManage';
 import NochesManage from './admin/NochesManage';
 import ReservationsManage from './admin/ReservationsManage';
 import ClientsManage from './admin/ClientsManage';
@@ -37,6 +39,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="menu" element={<MenuManage />} />
           <Route path="promos" element={<ProtectedRoute roles={STAFF}><PromosManage /></ProtectedRoute>} />
+          <Route path="eventos" element={<ProtectedRoute roles={STAFF}><EventosManage /></ProtectedRoute>} />
           <Route path="noches" element={<ProtectedRoute roles={STAFF}><NochesManage /></ProtectedRoute>} />
           <Route path="reservations" element={<ProtectedRoute roles={STAFF}><ReservationsManage /></ProtectedRoute>} />
           <Route path="clients" element={<ClientsManage />} />
@@ -56,6 +59,7 @@ export default function App() {
               <Route path="/reservations" element={<Reservations />} />
             </Routes>
             <Footer />
+            <EventosPopup />
           </>
         } />
       </Routes>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import heroImg from '../assets/hero-misayeres.jpg';
 
 function IconEntradas() {
   return (
@@ -50,89 +50,16 @@ const FEATURES = [
 export default function Home() {
   return (
     <div style={{ fontFamily: "'Karla', sans-serif" }}>
-      <section style={{
-        padding: '140px 0 100px',
-        textAlign: 'center',
-        background: '#ffffff',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(ellipse at 50% 0%, #f5f5f5 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-        <div className="container" style={{ position: 'relative' }}>
-          <img src={logo} alt="Mis Ayeres" style={{ height: '96px', width: 'auto', margin: '0 auto 24px', display: 'block' }} />
-          <h1 style={{
-            fontFamily: "'Playfair Display SC', serif",
-            fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
-            fontWeight: 700,
-            color: '#1a1a1a',
-            marginBottom: '20px',
-            letterSpacing: '-0.5px',
-            lineHeight: 1.15,
-          }}>
-            Bienvenido a<br />Mis Ayeres
-          </h1>
-          <p style={{
-            fontSize: 'clamp(1rem, 1.5vw, 1.2rem)',
-            color: '#6b6b6b',
-            maxWidth: '560px',
-            margin: '0 auto 48px',
-            lineHeight: 1.8,
-          }}>
+      <section className="home-hero" style={{ backgroundImage: `url(${heroImg})` }}>
+        <div className="home-hero-overlay" />
+        <div className="container home-hero-content">
+          <h1>Bienvenido a<br />Mis Ayeres</h1>
+          <p>
             Descubra una experiencia culinaria donde los sabores tradicionales se encuentran con la cocina contemporanea.
           </p>
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link
-              to="/menu"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '14px 36px',
-                background: '#1a1a1a',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: 500,
-                letterSpacing: '0.3px',
-                cursor: 'pointer',
-                transition: 'all 0.25s ease',
-              }}
-              onMouseEnter={e => { e.target.style.background = '#4a4a4a'; }}
-              onMouseLeave={e => { e.target.style.background = '#1a1a1a'; }}
-            >
-              Ver Menu
-            </Link>
-            <Link
-              to="/reservations"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '14px 36px',
-                background: 'transparent',
-                color: '#1a1a1a',
-                border: '1.5px solid #1a1a1a',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: 500,
-                letterSpacing: '0.3px',
-                cursor: 'pointer',
-                transition: 'all 0.25s ease',
-              }}
-              onMouseEnter={e => { e.target.style.background = '#1a1a1a'; e.target.style.color = '#ffffff'; }}
-              onMouseLeave={e => { e.target.style.background = 'transparent'; e.target.style.color = '#1a1a1a'; }}
-            >
-              Reservar Mesa
-            </Link>
+          <div className="home-hero-actions">
+            <Link to="/menu" className="btn btn-light">Ver Menu</Link>
+            <Link to="/reservations" className="btn btn-ghost-light">Reservar Mesa</Link>
           </div>
         </div>
       </section>

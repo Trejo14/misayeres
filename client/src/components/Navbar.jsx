@@ -1,17 +1,16 @@
 import { Link, useLocation } from 'react-router-dom';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo-crop.png';
 
 export default function Navbar() {
   const location = useLocation();
 
-  const isActive = (path) => location.pathname === path ? { color: '#1a1a1a' } : {};
+  const isActive = (path) => location.pathname === path ? { color: '#ffffff' } : {};
 
   return (
     <nav className="navbar">
       <div className="container">
-        <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img src={logo} alt="Mis Ayeres" style={{ height: '40px', width: 'auto' }} />
-          Mis<span>Ayeres</span>
+        <Link to="/" className="logo">
+          <img src={logo} alt="Mis Ayeres" />
         </Link>
         <ul className="nav-links">
           <li><Link to="/" style={isActive('/')}>Inicio</Link></li>

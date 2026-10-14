@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Pencil } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { formatDate, formatTime, todayISO } from '../utils/format';
 
@@ -11,6 +11,7 @@ export default function ReservationsManage() {
   const [items, setItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
+  const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState('');
   const [filterEstado, setFilterEstado] = useState('');
   const [saving, setSaving] = useState(false);
@@ -27,7 +28,23 @@ export default function ReservationsManage() {
   useEffect(loadItems, []);
 
   const openCreate = () => {
+    setEditing(null);
     setForm(EMPTY_FORM);
+    setShowModal(true);
+  };
+
+  const openEdit = (item) => {
+    setEditing(item);
+    setForm({
+      nombre_cliente: item.nombre_cliente || '',
+      telefono: item.telefono || '',
+      email: item.email || '',
+      fecha: item.fecha || '',
+      hora: formatTime(item.hora) === '-' ? '' : formatTime(item.hora),
+      personas: item.personas,
+      notas: item.notas || '',
+      estado: item.estado,
+    });
     setShowModal(true);
   };
 
@@ -35,15 +52,19 @@ export default function ReservationsManage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const { estado, ...payload } = form;
-      const { data } = await axios.post('/api/reservations', payload);
-      if (estado !== 'pendiente' && data?.id) {
-        await axios.put(`/api/reservations/${data.id}`, { estado });
+      if (editing) {
+        await axios.put(`/api/reservations/${editing.id}`, form);
+      } else {
+        const { estado, ...payload } = form;
+        const { data } = await axios.post('/api/reservations', payload);
+        if (estado !== 'pendiente' && data?.id) {
+          await axios.put(`/api/reservations/${data.id}`, { estado });
+        }
       }
       setShowModal(false);
       loadItems();
     } catch (err) {
-      alert(err.response?.data?.error || 'Error al crear la reserva');
+      alert(err.response?.data?.error || (editing ? 'Error al actualizar la reserva' : 'Error al crear la reserva'));
     } finally {
       setSaving(false);
     }
@@ -116,7 +137,7 @@ export default function ReservationsManage() {
                 <td style={{ whiteSpace: 'nowrap' }}>{formatDate(item.fecha)}</td>
                 <td>{formatTime(item.hora)}</td>
                 <td>{item.personas}</td>
-                <td className="cell-truncate" style={{ maxWidth: '180px', color: 'var(--text-light)' }} title={item.notas}>{item.notas || '-'}</td>
+                <td className="cell-wrap" style={{ color: 'var(--text-light)' }}>{item.notas || '-'}</td>
                 <td>
                   <span className={`badge badge-${item.estado}`}>{item.estado}</span>
                 </td>
@@ -125,6 +146,9 @@ export default function ReservationsManage() {
                     <select className="table-select" value={item.estado} onChange={e => handleStatus(item.id, e.target.value)}>
                       {ESTADOS.map(e => <option key={e}>{e}</option>)}
                     </select>
+                    <button className="btn btn-sm btn-outline" onClick={() => openEdit(item)}>
+                      <Pencil size={14} strokeWidth={1.5} /> Editar
+                    </button>
                     {canDelete && (
                       <button className="btn btn-sm btn-danger" onClick={() => handleDelete(item.id)}>
                         <Trash2 size={14} strokeWidth={1.5} /> Eliminar
@@ -146,7 +170,7 @@ export default function ReservationsManage() {
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <h2>Nueva Reserva</h2>
+            <h2>{editing ? 'Editar Reserva' : 'Nueva Reserva'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Nombre Completo</label>
@@ -165,7 +189,7 @@ export default function ReservationsManage() {
               <div className="form-row">
                 <div className="form-group">
                   <label>Fecha</label>
-                  <input type="date" value={form.fecha} onChange={e => setForm({ ...form, fecha: e.target.value })} min={today} required />
+                  <input type="date" value={form.fecha} onChange={e => setForm({ ...form, fecha: e.target.value })} min={editing ? undefined : today} required />
                 </div>
                 <div className="form-group">
                   <label>Hora</label>
@@ -188,7 +212,7 @@ export default function ReservationsManage() {
               </div>
               <div className="form-actions">
                 <button type="button" className="btn btn-outline" onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Guardando...' : 'Crear'}</button>
+                <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Guardando...' : editing ? 'Actualizar' : 'Crear'}</button>
               </div>
             </form>
           </div>

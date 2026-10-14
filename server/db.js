@@ -154,6 +154,20 @@ export async function initDB() {
        WHERE n.cantante_id IS NULL AND n.cantante <> '' AND c.nombre = n.cantante
     `);
 
+    // Eventos destacados que se muestran en una ventana flotante al abrir el sitio.
+    // La fecha y la imagen son opcionales; sin fecha el evento se muestra hasta desactivarlo.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS eventos (
+        id SERIAL PRIMARY KEY,
+        titulo TEXT NOT NULL,
+        descripcion TEXT,
+        fecha DATE,
+        imagen TEXT,
+        activa INTEGER DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Migraciones de quejas: cualquier usuario puede enviarlas, de forma anonima
     // (sin reportero) y sin que sean necesariamente sobre un empleado concreto.
     await client.query('ALTER TABLE quejas ALTER COLUMN reportero_id DROP NOT NULL');
