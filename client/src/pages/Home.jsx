@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import heroImg from '../assets/hero-misayeres.jpg';
+import EventosDestacados from '../components/EventosDestacados';
 
 function IconEntradas() {
   return (
@@ -50,17 +51,22 @@ const FEATURES = [
 export default function Home() {
   return (
     <div style={{ fontFamily: "'Karla', sans-serif" }}>
-      <section className="home-hero" style={{ backgroundImage: `url(${heroImg})` }}>
-        <div className="home-hero-overlay" />
-        <div className="container home-hero-content">
-          <h1>Bienvenido a<br />Mis Ayeres</h1>
-          <p>
-            Descubra una experiencia culinaria donde los sabores tradicionales se encuentran con la cocina contemporanea.
-          </p>
-          <div className="home-hero-actions">
-            <Link to="/menu" className="btn btn-light">Ver Menu</Link>
-            <Link to="/reservations" className="btn btn-ghost-light">Reservar Mesa</Link>
+      <section className="home-hero">
+        <div className="container home-hero-grid">
+          <div className="home-hero-content">
+            <h1>Bienvenido a<br />Mis Ayeres</h1>
+            <p>
+              Descubra una experiencia culinaria donde los sabores tradicionales se encuentran con la cocina contemporanea.
+            </p>
+            <div className="home-hero-actions">
+              <Link to="/menu" className="btn btn-light">Ver Menu</Link>
+              <Link to="/reservations" className="btn btn-ghost-light">Reservar Mesa</Link>
+            </div>
+            <EventosDestacados />
           </div>
+          <figure className="home-hero-frame">
+            <img src={heroImg} alt="Interior del restaurante Mis Ayeres" />
+          </figure>
         </div>
       </section>
 

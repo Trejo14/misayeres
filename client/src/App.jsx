@@ -2,7 +2,6 @@ import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import EventosPopup from './components/EventosPopup';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Promos from './pages/Promos';
@@ -59,7 +58,6 @@ export default function App() {
               <Route path="/reservations" element={<Reservations />} />
             </Routes>
             <Footer />
-            <EventosPopup />
           </>
         } />
       </Routes>
