@@ -104,7 +104,7 @@ export default function Reservations() {
                   value={form.personas}
                   onChange={handleChange}
                   min={1}
-                  max={20}
+                  max={80}
                   required
                 />
               </div>
