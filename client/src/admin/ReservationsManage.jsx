@@ -197,7 +197,7 @@ export default function ReservationsManage() {
                 </div>
                 <div className="form-group">
                   <label>Personas</label>
-                  <input type="number" value={form.personas} onChange={e => setForm({ ...form, personas: e.target.value })} min={1} max={20} required />
+                  <input type="number" value={form.personas} onChange={e => setForm({ ...form, personas: e.target.value })} min={1} required />
                 </div>
               </div>
               <div className="form-group">

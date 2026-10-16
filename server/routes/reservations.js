@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { query, run } from '../db.js';
-import { authMiddleware, roleMiddleware } from '../middlewares/auth.js';
+import { authMiddleware, roleMiddleware, usuarioOpcional } from '../middlewares/auth.js';
 
 const router = Router();
 
@@ -22,8 +22,14 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Campos requeridos: nombre, teléfono, fecha, hora, personas' });
     }
 
+    // El limite de 20 personas solo aplica a reservas del sitio publico; el personal no tiene limite.
+    const usuario = await usuarioOpcional(req);
+    const esPersonal = usuario && ['dueno', 'admin'].includes(usuario.rol);
     const numPersonas = parseInt(personas);
-    if (Number.isNaN(numPersonas) || numPersonas < 1 || numPersonas > 20) {
+    if (Number.isNaN(numPersonas) || numPersonas < 1) {
+      return res.status(400).json({ error: 'El número de personas debe ser al menos 1' });
+    }
+    if (!esPersonal && numPersonas > 20) {
       return res.status(400).json({ error: 'El número de personas debe estar entre 1 y 20' });
     }
 
@@ -71,8 +77,8 @@ router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin'), async (req,
     }
 
     const numPersonas = parseInt(personas);
-    if (Number.isNaN(numPersonas) || numPersonas < 1 || numPersonas > 20) {
-      return res.status(400).json({ error: 'El número de personas debe estar entre 1 y 20' });
+    if (Number.isNaN(numPersonas) || numPersonas < 1) {
+      return res.status(400).json({ error: 'El número de personas debe ser al menos 1' });
     }
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || !/^\d{2}:\d{2}/.test(hora)) {

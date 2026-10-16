@@ -34,6 +34,19 @@ export async function authMiddleware(req, res, next) {
   }
 }
 
+// Para rutas publicas: devuelve el usuario si viene un token valido, o null.
+export async function usuarioOpcional(req) {
+  const header = req.headers.authorization;
+  if (!header) return null;
+  try {
+    const decoded = jwt.verify(header.split(' ')[1], JWT_SECRET);
+    const users = await query('SELECT id, nombre, email, rol FROM usuarios WHERE id = $1', [decoded.id]);
+    return users[0] || null;
+  } catch {
+    return null;
+  }
+}
+
 export function roleMiddleware(...roles) {
   return (req, res, next) => {
     if (!roles.includes(req.user.rol)) {
