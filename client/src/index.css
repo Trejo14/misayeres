@@ -14,6 +14,9 @@
   --shadow: 0 2px 16px rgba(0,0,0,0.06);
   --shadow-lg: 0 8px 40px rgba(0,0,0,0.1);
   --gold: #c9a45c;
+  --rojo: #A8322D;
+  --verde: #6E7B32;
+  --amarillo: #E3A72F;
 }
 
 * {
@@ -194,12 +197,15 @@ img { max-width: 100%; }
 }
 
 .home-hero-grid {
+  position: relative;
+  z-index: 1;
+  max-width: 1480px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-columns: minmax(320px, 0.72fr) minmax(0, 1.6fr);
   align-items: center;
-  gap: 64px;
-  padding-top: 72px;
-  padding-bottom: 72px;
+  gap: 56px;
+  padding-top: 104px;
+  padding-bottom: 88px;
 }
 
 .home-hero-content {
@@ -237,7 +243,7 @@ img { max-width: 100%; }
 
 .home-hero h1 {
   font-family: 'Playfair Display SC', serif;
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-size: clamp(2.5rem, 4.4vw, 4.2rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.5px;
@@ -1424,10 +1430,78 @@ img.menu-card-media {
 
 @keyframes evento-aviso-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
+/* Decoracion mexicana del hero */
+.mx-icon { --a1: var(--amarillo); --a2: var(--verde); display: block; }
+
+.mx-campo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.mx-campo-item {
+  position: absolute;
+  opacity: 0.58;
+}
+
+.mx-flotar {
+  width: 100%;
+  height: 100%;
+  animation: mx-flotar 6s ease-in-out infinite alternate;
+}
+
+@keyframes mx-flotar {
+  from { transform: translateY(-8px) rotate(-3deg); }
+  to { transform: translateY(8px) rotate(3deg); }
+}
+
+.mx-guirnalda {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  border-top: 2px solid rgba(255,255,255,0.35);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.mx-banderin-wrap {
+  flex: 0 0 auto;
+  transform-origin: 50% 0;
+  animation: mx-balanceo 3.2s ease-in-out infinite alternate;
+}
+
+.mx-banderin { display: block; width: 40px; height: 48px; }
+
+@keyframes mx-balanceo { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+
+.mx-maraca { transform-box: view-box; transform-origin: 50% 70%; transition: transform 0.3s ease; }
+.mx-maracas:hover .mx-maraca-l { transform: rotate(-8deg); }
+.mx-maracas:hover .mx-maraca-r { transform: rotate(8deg); }
+
+.mx-sarape {
+  display: block;
+  width: 100%;
+  height: 28px;
+}
+
+.home-hero-sarape {
+  position: relative;
+  z-index: 1;
+}
+
 @media (max-width: 900px) {
-  .home-hero-grid { grid-template-columns: 1fr; gap: 48px; padding-top: 56px; padding-bottom: 64px; }
+  .home-hero-grid { grid-template-columns: 1fr; gap: 48px; padding-top: 84px; padding-bottom: 64px; }
+  .mx-campo-item:not(.mx-campo-movil) { display: none; }
+  .mx-campo-item { opacity: 0.4; scale: 0.75; }
+  .mx-banderin { width: 30px; height: 36px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .evento-aviso, .evento-visor { animation: none; }
+  .evento-aviso, .evento-visor, .mx-banderin-wrap, .mx-flotar { animation: none; }
+  .mx-maraca { transition: none; }
 }

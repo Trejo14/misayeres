@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import heroImg from '../assets/hero-misayeres.jpg';
 import EventosDestacados from '../components/EventosDestacados';
+import { Guirnalda, Sarape, CampoIconos } from '../components/HeroDecor';
 
 function IconEntradas() {
   return (
@@ -52,6 +53,8 @@ export default function Home() {
   return (
     <div style={{ fontFamily: "'Karla', sans-serif" }}>
       <section className="home-hero">
+        <CampoIconos />
+        <Guirnalda />
         <div className="container home-hero-grid">
           <div className="home-hero-content">
             <h1>Bienvenido a<br />Mis Ayeres</h1>
@@ -68,6 +71,7 @@ export default function Home() {
             <img src={heroImg} alt="Interior del restaurante Mis Ayeres" />
           </figure>
         </div>
+        <Sarape className="home-hero-sarape" />
       </section>
 
       <section style={{
