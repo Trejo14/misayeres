@@ -249,6 +249,7 @@ img { max-width: 100%; }
   letter-spacing: -0.5px;
   margin-bottom: 20px;
   color: var(--white);
+  text-align: center;
 }
 
 .home-hero p {
