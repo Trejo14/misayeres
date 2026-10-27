@@ -55,6 +55,17 @@ export function weekDays(desde) {
   return Array.from({ length: 7 }, (_, i) => addDays(desde, i));
 }
 
+// Noches Mis Ayeres solo abre de martes a sabado.
+export function nochesDays(desde) {
+  return Array.from({ length: 5 }, (_, i) => addDays(desde, i + 1));
+}
+
+// Lunes de la semana de noches que toca mostrar: el domingo ya no queda
+// ninguna noche, asi que se adelanta a la semana siguiente.
+export function nochesWeekStartISO() {
+  return weekStartISO(addDays(todayISO(), 1));
+}
+
 export function formatWeekday(iso) {
   const nombre = new Date(`${iso}T00:00:00`).toLocaleDateString('es-MX', { weekday: 'long' });
   return nombre.charAt(0).toUpperCase() + nombre.slice(1);

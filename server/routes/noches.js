@@ -5,6 +5,12 @@ import { deleteImageIfUnused } from './images.js';
 
 const router = Router();
 
+// Noches Mis Ayeres solo abre de martes (2) a sabado (6).
+function esNoche(valor) {
+  const dia = new Date(`${valor}T00:00:00Z`).getUTCDay();
+  return dia >= 2 && dia <= 6;
+}
+
 function fechaValida(valor) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(valor || '')) return false;
   const fecha = new Date(`${valor}T00:00:00Z`);
@@ -54,6 +60,7 @@ router.post('/copiar', authMiddleware, roleMiddleware('dueno', 'admin'), async (
        SELECT fecha + ($2::date - $1::date), promo_id, cantante_id, evento, media, media_tipo
          FROM noches
         WHERE fecha BETWEEN $1::date AND $1::date + 6
+          AND EXTRACT(ISODOW FROM fecha + ($2::date - $1::date)) BETWEEN 2 AND 6
        ON CONFLICT (fecha) DO NOTHING`,
       [desde, hacia]
     );
@@ -70,6 +77,9 @@ router.put('/:fecha', authMiddleware, roleMiddleware('dueno', 'admin'), async (r
     const { fecha } = req.params;
     if (!fechaValida(fecha)) {
       return res.status(400).json({ error: 'Fecha inválida' });
+    }
+    if (!esNoche(fecha)) {
+      return res.status(400).json({ error: 'Noches Mis Ayeres solo es de martes a sábado' });
     }
 
     const evento = (req.body.evento || '').trim();

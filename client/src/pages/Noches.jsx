@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Media from '../components/Media';
-import { addDays, weekStartISO, weekDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
+import { addDays, nochesWeekStartISO, nochesDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
 
 export default function Noches() {
-  // La semana se calcula con la fecha de hoy, asi que cambia sola cada lunes.
-  const desde = weekStartISO();
+  // La semana se calcula con la fecha de hoy, asi que cambia sola cada domingo.
+  const desde = nochesWeekStartISO();
   const hoy = todayISO();
   const [dias, setDias] = useState({});
   const [loading, setLoading] = useState(true);
@@ -23,14 +23,14 @@ export default function Noches() {
         <h2 className="section-title">Noches Mis Ayeres</h2>
         <div className="divider" />
         <p className="section-subtitle">
-          Programa de la semana del {formatDayMonth(desde)} al {formatDayMonth(addDays(desde, 6))}.
+          Programa de martes {formatDayMonth(addDays(desde, 1))} a sabado {formatDayMonth(addDays(desde, 5))}.
         </p>
 
         {loading ? (
           <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.6)' }}>Cargando programa...</p>
         ) : (
           <div className="noches-list">
-            {weekDays(desde).map(fecha => {
+            {nochesDays(desde).map(fecha => {
               const dia = dias[fecha];
               const vacia = !dia || (!dia.evento && !dia.cantante && !dia.promo_titulo && !dia.media);
               const clases = ['noche', fecha === hoy && 'hoy', vacia && 'vacia'].filter(Boolean).join(' ');

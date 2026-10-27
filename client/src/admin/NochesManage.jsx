@@ -3,7 +3,7 @@ import axios from 'axios';
 import { ChevronLeft, ChevronRight, Copy, Pencil, Plus, Trash2, User } from 'lucide-react';
 import ImageDropzone from '../components/ImageDropzone';
 import Media from '../components/Media';
-import { addDays, weekStartISO, weekDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
+import { addDays, nochesWeekStartISO, nochesDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
 
 const EMPTY_FORM = { promo_id: '', cantante_id: '', evento: '', media: '', media_tipo: 'imagen' };
 const EMPTY_CANTANTE = { nombre: '', foto: '', foto_tipo: 'imagen' };
@@ -14,7 +14,7 @@ const blockFileDrop = (e) => {
 };
 
 export default function NochesManage() {
-  const semanaActual = weekStartISO();
+  const semanaActual = nochesWeekStartISO();
   const [desde, setDesde] = useState(semanaActual);
   const [dias, setDias] = useState({});
   const [promos, setPromos] = useState([]);
@@ -150,7 +150,7 @@ export default function NochesManage() {
           <button className="btn btn-sm btn-outline" onClick={() => setDesde(addDays(desde, -7))} aria-label="Semana anterior">
             <ChevronLeft size={14} strokeWidth={1.5} />
           </button>
-          <strong>{formatDayMonth(desde)} &ndash; {formatDayMonth(addDays(desde, 6))}</strong>
+          <strong>{formatDayMonth(addDays(desde, 1))} &ndash; {formatDayMonth(addDays(desde, 5))}</strong>
           <button className="btn btn-sm btn-outline" onClick={() => setDesde(addDays(desde, 7))} aria-label="Semana siguiente">
             <ChevronRight size={14} strokeWidth={1.5} />
           </button>
@@ -164,7 +164,7 @@ export default function NochesManage() {
       </div>
 
       <p className="form-hint" style={{ marginBottom: '16px' }}>
-        El sitio muestra siempre la semana en curso (lunes a domingo) y cambia sola cada lunes.
+        Noches Mis Ayeres es de martes a sabado. El sitio muestra siempre la semana en curso y el domingo pasa sola a la siguiente.
         Puedes adelantar las semanas siguientes desde aqui. "Copiar semana anterior" solo llena los dias vacios.
       </p>
 
@@ -181,7 +181,7 @@ export default function NochesManage() {
             </tr>
           </thead>
           <tbody>
-            {weekDays(desde).map(fecha => {
+            {nochesDays(desde).map(fecha => {
               const dia = dias[fecha];
               return (
                 <tr key={fecha}>
