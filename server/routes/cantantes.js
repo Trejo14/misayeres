@@ -5,6 +5,8 @@ import { deleteImageIfUnused } from './images.js';
 
 const router = Router();
 
+const tipoMedia = (tipo) => (tipo === 'video' ? 'video' : 'imagen');
+
 function validar({ nombre }) {
   if (!nombre?.trim()) return 'El nombre es requerido';
   if (nombre.length > 120) return 'El nombre es demasiado largo';
@@ -23,14 +25,14 @@ router.get('/', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, re
 
 router.post('/', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
   try {
-    const { nombre, foto } = req.body;
+    const { nombre, foto, foto_tipo } = req.body;
 
     const error = validar(req.body);
     if (error) return res.status(400).json({ error });
 
     const result = await run(
-      'INSERT INTO cantantes (nombre, foto) VALUES ($1, $2) RETURNING *',
-      [nombre.trim(), foto || '']
+      'INSERT INTO cantantes (nombre, foto, foto_tipo) VALUES ($1, $2, $3) RETURNING *',
+      [nombre.trim(), foto || '', tipoMedia(foto_tipo)]
     );
 
     res.status(201).json(result.rows[0]);
@@ -42,7 +44,7 @@ router.post('/', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, r
 
 router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
   try {
-    const { nombre, foto } = req.body;
+    const { nombre, foto, foto_tipo } = req.body;
 
     const error = validar(req.body);
     if (error) return res.status(400).json({ error });
@@ -52,7 +54,7 @@ router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin'), async (req,
       return res.status(404).json({ error: 'Cantante no encontrado' });
     }
 
-    await run('UPDATE cantantes SET nombre=$1, foto=$2 WHERE id=$3', [nombre.trim(), foto || '', req.params.id]);
+    await run('UPDATE cantantes SET nombre=$1, foto=$2, foto_tipo=$3 WHERE id=$4', [nombre.trim(), foto || '', tipoMedia(foto_tipo), req.params.id]);
 
     if (actual[0].foto !== (foto || '')) {
       await deleteImageIfUnused(actual[0].foto);

@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ChevronLeft, ChevronRight, Copy, Pencil, Plus, Trash2, User } from 'lucide-react';
 import ImageDropzone from '../components/ImageDropzone';
+import Media from '../components/Media';
 import { addDays, weekStartISO, weekDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
 
-const EMPTY_FORM = { promo_id: '', cantante_id: '', evento: '' };
-const EMPTY_CANTANTE = { nombre: '', foto: '' };
+const EMPTY_FORM = { promo_id: '', cantante_id: '', evento: '', media: '', media_tipo: 'imagen' };
+const EMPTY_CANTANTE = { nombre: '', foto: '', foto_tipo: 'imagen' };
 
 // Evita que soltar un archivo fuera de la zona haga que el navegador lo abra.
 const blockFileDrop = (e) => {
@@ -55,6 +56,8 @@ export default function NochesManage() {
       promo_id: dia?.promo_id || '',
       cantante_id: dia?.cantante_id || '',
       evento: dia?.evento || '',
+      media: dia?.media || '',
+      media_tipo: dia?.media_tipo || 'imagen',
     });
   };
 
@@ -89,7 +92,7 @@ export default function NochesManage() {
 
   const openCantante = (cantante = {}) => {
     setCantanteModal(cantante);
-    setCantanteForm({ nombre: cantante.nombre || '', foto: cantante.foto || '' });
+    setCantanteForm({ nombre: cantante.nombre || '', foto: cantante.foto || '', foto_tipo: cantante.foto_tipo || 'imagen' });
   };
 
   const handleCantanteSubmit = async (e) => {
@@ -131,8 +134,8 @@ export default function NochesManage() {
     return promo.activa ? promo.titulo : `${promo.titulo} (inactiva)`;
   };
 
-  const fotoCantante = (foto) => foto ? (
-    <img className="thumb thumb-round" src={foto} alt="" loading="lazy" />
+  const fotoCantante = (cantante) => cantante.foto ? (
+    <Media className="thumb thumb-round" src={cantante.foto} tipo={cantante.foto_tipo} />
   ) : (
     <div className="thumb thumb-round" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-lightest)' }}>
       <User size={18} strokeWidth={1.5} />
@@ -173,6 +176,7 @@ export default function NochesManage() {
               <th>Promo del dia</th>
               <th>Cantante</th>
               <th>Evento</th>
+              <th>Foto / video</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -188,6 +192,7 @@ export default function NochesManage() {
                   <td>{dia?.promo_id ? nombrePromo(dia.promo_id) : '-'}</td>
                   <td>{dia?.cantante || '-'}</td>
                   <td>{dia?.evento || '-'}</td>
+                  <td>{dia?.media ? <Media className="thumb" src={dia.media} tipo={dia.media_tipo} /> : '-'}</td>
                   <td>
                     <button className="btn btn-sm btn-outline" onClick={() => openEdit(fecha)}>
                       <Pencil size={14} strokeWidth={1.5} /> Editar
@@ -211,7 +216,7 @@ export default function NochesManage() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th style={{ width: '60px' }}>Foto</th>
+              <th style={{ width: '60px' }}>Foto / video</th>
               <th>Nombre</th>
               <th>Acciones</th>
             </tr>
@@ -219,7 +224,7 @@ export default function NochesManage() {
           <tbody>
             {cantantes.map(cantante => (
               <tr key={cantante.id}>
-                <td>{fotoCantante(cantante.foto)}</td>
+                <td>{fotoCantante(cantante)}</td>
                 <td>{cantante.nombre}</td>
                 <td>
                   <div className="table-actions">
@@ -241,7 +246,7 @@ export default function NochesManage() {
       </div>
 
       {editing && (
-        <div className="modal-overlay" onClick={() => setEditing(null)}>
+        <div className="modal-overlay" onClick={() => setEditing(null)} onDragOver={blockFileDrop} onDrop={blockFileDrop}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <h2>{formatWeekday(editing)} {formatDayMonth(editing)}</h2>
             <form onSubmit={handleSubmit}>
@@ -271,6 +276,15 @@ export default function NochesManage() {
                 <label>Evento</label>
                 <input value={form.evento} maxLength={160} onChange={e => setForm({ ...form, evento: e.target.value })} />
               </div>
+              <div className="form-group">
+                <label>Foto o video de la noche (opcional)</label>
+                <ImageDropzone
+                  allowVideo
+                  value={form.media}
+                  tipo={form.media_tipo}
+                  onChange={(media, tipo) => setForm(f => ({ ...f, media, media_tipo: tipo || 'imagen' }))}
+                />
+              </div>
               <p className="form-hint">Deja todo vacio para quitar el programa de este dia.</p>
               <div className="form-actions">
                 <button type="button" className="btn btn-outline" onClick={() => setEditing(null)}>Cancelar</button>
@@ -289,8 +303,13 @@ export default function NochesManage() {
             <h2>{cantanteModal.id ? 'Editar Cantante' : 'Nuevo Cantante'}</h2>
             <form onSubmit={handleCantanteSubmit}>
               <div className="form-group">
-                <label>Foto (opcional)</label>
-                <ImageDropzone value={cantanteForm.foto} onChange={foto => setCantanteForm(f => ({ ...f, foto }))} />
+                <label>Foto o video (opcional)</label>
+                <ImageDropzone
+                  allowVideo
+                  value={cantanteForm.foto}
+                  tipo={cantanteForm.foto_tipo}
+                  onChange={(foto, tipo) => setCantanteForm(f => ({ ...f, foto, foto_tipo: tipo || 'imagen' }))}
+                />
               </div>
               <div className="form-group">
                 <label>Nombre</label>

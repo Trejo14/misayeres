@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { query, run } from '../db.js';
 import { authMiddleware, roleMiddleware } from '../middlewares/auth.js';
+import { deleteImageIfUnused } from './images.js';
 
 const router = Router();
 
@@ -22,7 +23,8 @@ router.get('/', async (req, res) => {
 
     const items = await query(
       `SELECT n.fecha, n.promo_id, n.cantante_id, n.evento,
-              c.nombre AS cantante, c.foto AS cantante_foto,
+              n.media, n.media_tipo,
+              c.nombre AS cantante, c.foto AS cantante_foto, c.foto_tipo AS cantante_foto_tipo,
               p.titulo AS promo_titulo, p.descripcion AS promo_descripcion,
               p.media AS promo_media, p.media_tipo AS promo_media_tipo
          FROM noches n
@@ -48,8 +50,8 @@ router.post('/copiar', authMiddleware, roleMiddleware('dueno', 'admin'), async (
     }
 
     const result = await run(
-      `INSERT INTO noches (fecha, promo_id, cantante_id, evento)
-       SELECT fecha + ($2::date - $1::date), promo_id, cantante_id, evento
+      `INSERT INTO noches (fecha, promo_id, cantante_id, evento, media, media_tipo)
+       SELECT fecha + ($2::date - $1::date), promo_id, cantante_id, evento, media, media_tipo
          FROM noches
         WHERE fecha BETWEEN $1::date AND $1::date + 6
        ON CONFLICT (fecha) DO NOTHING`,
@@ -73,6 +75,8 @@ router.put('/:fecha', authMiddleware, roleMiddleware('dueno', 'admin'), async (r
     const evento = (req.body.evento || '').trim();
     const promoId = req.body.promo_id ? parseInt(req.body.promo_id) : null;
     const cantanteId = req.body.cantante_id ? parseInt(req.body.cantante_id) : null;
+    const media = req.body.media || null;
+    const mediaTipo = req.body.media_tipo === 'video' ? 'video' : 'imagen';
 
     if (evento.length > 160) {
       return res.status(400).json({ error: 'El texto es demasiado largo' });
@@ -88,19 +92,28 @@ router.put('/:fecha', authMiddleware, roleMiddleware('dueno', 'admin'), async (r
       if (promo.length === 0) return res.status(400).json({ error: 'La promo ya no existe' });
     }
 
+    const actual = await query('SELECT media FROM noches WHERE fecha = $1', [fecha]);
+    const mediaAnterior = actual[0]?.media;
+
     // Un dia sin nada asignado no ocupa fila.
-    if (cantanteId === null && !evento && promoId === null) {
+    if (cantanteId === null && !evento && promoId === null && !media) {
       await run('DELETE FROM noches WHERE fecha = $1', [fecha]);
+      if (mediaAnterior) await deleteImageIfUnused(mediaAnterior);
       return res.json({ message: 'Día vaciado' });
     }
 
     await run(
-      `INSERT INTO noches (fecha, promo_id, cantante_id, evento) VALUES ($1, $2, $3, $4)
+      `INSERT INTO noches (fecha, promo_id, cantante_id, evento, media, media_tipo) VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT (fecha) DO UPDATE
          SET promo_id = EXCLUDED.promo_id, cantante_id = EXCLUDED.cantante_id,
-             evento = EXCLUDED.evento, updated_at = CURRENT_TIMESTAMP`,
-      [fecha, promoId, cantanteId, evento]
+             evento = EXCLUDED.evento, media = EXCLUDED.media, media_tipo = EXCLUDED.media_tipo,
+             updated_at = CURRENT_TIMESTAMP`,
+      [fecha, promoId, cantanteId, evento, media, mediaTipo]
     );
+
+    if (mediaAnterior && mediaAnterior !== media) {
+      await deleteImageIfUnused(mediaAnterior);
+    }
 
     res.json({ message: 'Día actualizado' });
   } catch (err) {

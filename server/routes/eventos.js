@@ -7,6 +7,8 @@ const router = Router();
 
 const MAX_DESCRIPCION = 400;
 
+const tipoMedia = (tipo) => (tipo === 'video' ? 'video' : 'imagen');
+
 function validar({ titulo, descripcion, fecha }) {
   if (!titulo?.trim()) {
     return 'El título es requerido';
@@ -50,14 +52,14 @@ router.get('/all', authMiddleware, roleMiddleware('dueno', 'admin'), async (req,
 
 router.post('/', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
   try {
-    const { titulo, descripcion, fecha, imagen, activa } = req.body;
+    const { titulo, descripcion, fecha, imagen, imagen_tipo, activa } = req.body;
 
     const error = validar(req.body);
     if (error) return res.status(400).json({ error });
 
     await run(
-      'INSERT INTO eventos (titulo, descripcion, fecha, imagen, activa) VALUES ($1, $2, $3, $4, $5)',
-      [titulo.trim(), (descripcion || '').trim(), fecha || null, imagen || null, activa === undefined || activa ? 1 : 0]
+      'INSERT INTO eventos (titulo, descripcion, fecha, imagen, imagen_tipo, activa) VALUES ($1, $2, $3, $4, $5, $6)',
+      [titulo.trim(), (descripcion || '').trim(), fecha || null, imagen || null, tipoMedia(imagen_tipo), activa === undefined || activa ? 1 : 0]
     );
 
     res.status(201).json({ message: 'Evento creado' });
@@ -69,7 +71,7 @@ router.post('/', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, r
 
 router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin'), async (req, res) => {
   try {
-    const { titulo, descripcion, fecha, imagen, activa } = req.body;
+    const { titulo, descripcion, fecha, imagen, imagen_tipo, activa } = req.body;
 
     const error = validar(req.body);
     if (error) return res.status(400).json({ error });
@@ -80,8 +82,8 @@ router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin'), async (req,
     }
 
     await run(
-      'UPDATE eventos SET titulo=$1, descripcion=$2, fecha=$3, imagen=$4, activa=$5 WHERE id=$6',
-      [titulo.trim(), (descripcion || '').trim(), fecha || null, imagen || null, activa !== undefined ? (activa ? 1 : 0) : 1, req.params.id]
+      'UPDATE eventos SET titulo=$1, descripcion=$2, fecha=$3, imagen=$4, imagen_tipo=$5, activa=$6 WHERE id=$7',
+      [titulo.trim(), (descripcion || '').trim(), fecha || null, imagen || null, tipoMedia(imagen_tipo), activa !== undefined ? (activa ? 1 : 0) : 1, req.params.id]
     );
 
     if (actual[0].imagen && actual[0].imagen !== imagen) {

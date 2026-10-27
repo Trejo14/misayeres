@@ -168,6 +168,14 @@ export async function initDB() {
       )
     `);
 
+    // Los campos de imagen tambien aceptan video; el tipo indica como mostrarlo.
+    // Cada dia de Noches Mis Ayeres puede llevar ademas su propia foto o video.
+    await client.query("ALTER TABLE platillos ADD COLUMN IF NOT EXISTS imagen_tipo TEXT NOT NULL DEFAULT 'imagen'");
+    await client.query("ALTER TABLE eventos ADD COLUMN IF NOT EXISTS imagen_tipo TEXT NOT NULL DEFAULT 'imagen'");
+    await client.query("ALTER TABLE cantantes ADD COLUMN IF NOT EXISTS foto_tipo TEXT NOT NULL DEFAULT 'imagen'");
+    await client.query('ALTER TABLE noches ADD COLUMN IF NOT EXISTS media TEXT');
+    await client.query("ALTER TABLE noches ADD COLUMN IF NOT EXISTS media_tipo TEXT NOT NULL DEFAULT 'imagen'");
+
     // Migraciones de quejas: cualquier usuario puede enviarlas, de forma anonima
     // (sin reportero) y sin que sean necesariamente sobre un empleado concreto.
     await client.query('ALTER TABLE quejas ALTER COLUMN reportero_id DROP NOT NULL');

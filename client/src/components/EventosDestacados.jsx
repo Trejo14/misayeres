@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { ChevronLeft, ChevronRight, CalendarDays, X } from 'lucide-react';
+import Media from './Media';
 import { formatDate } from '../utils/format';
 
 // Aviso fijo dentro del hero con los eventos destacados que se configuran en el panel.
@@ -34,8 +35,8 @@ export default function EventosDestacados() {
   return (
     <aside className="evento-aviso" aria-label="Eventos destacados">
       {evento.imagen && (
-        <button type="button" className="evento-aviso-thumb" onClick={() => setVisor(true)} aria-label="Ver imagen del evento">
-          <img className="evento-aviso-img" src={evento.imagen} alt={evento.titulo} />
+        <button type="button" className="evento-aviso-thumb" onClick={() => setVisor(true)} aria-label="Ver archivo del evento">
+          <Media className="evento-aviso-img" src={evento.imagen} tipo={evento.imagen_tipo} alt={evento.titulo} video={{ autoPlay: true, loop: true }} />
         </button>
       )}
 
@@ -66,7 +67,13 @@ export default function EventosDestacados() {
           <button type="button" className="evento-visor-close" onClick={() => setVisor(false)} aria-label="Cerrar">
             <X size={20} strokeWidth={2} />
           </button>
-          <img src={evento.imagen} alt={evento.titulo} onClick={e => e.stopPropagation()} />
+          <Media
+            src={evento.imagen}
+            tipo={evento.imagen_tipo}
+            alt={evento.titulo}
+            video={{ autoPlay: true, controls: true, muted: false }}
+            onClick={e => e.stopPropagation()}
+          />
         </div>,
         document.body
       )}

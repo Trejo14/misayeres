@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import EventoPopup from './components/EventoPopup';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Promos from './pages/Promos';
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="*" element={
           <>
             <Navbar />
+            <EventoPopup />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/menu" element={<Menu />} />

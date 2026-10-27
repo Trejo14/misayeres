@@ -5,6 +5,8 @@ import { deleteImageIfUnused } from './images.js';
 
 const router = Router();
 
+const tipoMedia = (tipo) => (tipo === 'video' ? 'video' : 'imagen');
+
 function validar({ nombre, precio, categoria }) {
   if (!nombre?.trim() || precio === undefined || precio === '' || !categoria) {
     return 'Nombre, precio y categoría son requeridos';
@@ -50,14 +52,14 @@ router.get('/all', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'),
 
 router.post('/', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'), async (req, res) => {
   try {
-    const { nombre, descripcion, precio, categoria, imagen, disponible } = req.body;
+    const { nombre, descripcion, precio, categoria, imagen, imagen_tipo, disponible } = req.body;
 
     const error = validar(req.body);
     if (error) return res.status(400).json({ error });
 
     await run(
-      'INSERT INTO platillos (nombre, descripcion, precio, categoria, imagen, disponible) VALUES ($1, $2, $3, $4, $5, $6)',
-      [nombre.trim(), descripcion || '', parseFloat(precio), categoria, imagen || '', disponible === undefined || disponible ? 1 : 0]
+      'INSERT INTO platillos (nombre, descripcion, precio, categoria, imagen, imagen_tipo, disponible) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+      [nombre.trim(), descripcion || '', parseFloat(precio), categoria, imagen || '', tipoMedia(imagen_tipo), disponible === undefined || disponible ? 1 : 0]
     );
 
     res.status(201).json({ message: 'Platillo creado' });
@@ -69,7 +71,7 @@ router.post('/', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'), a
 
 router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'), async (req, res) => {
   try {
-    const { nombre, descripcion, precio, categoria, imagen, disponible } = req.body;
+    const { nombre, descripcion, precio, categoria, imagen, imagen_tipo, disponible } = req.body;
 
     const error = validar(req.body);
     if (error) return res.status(400).json({ error });
@@ -80,8 +82,8 @@ router.put('/:id', authMiddleware, roleMiddleware('dueno', 'admin', 'empleado'),
     }
 
     await run(
-      'UPDATE platillos SET nombre=$1, descripcion=$2, precio=$3, categoria=$4, imagen=$5, disponible=$6 WHERE id=$7',
-      [nombre.trim(), descripcion || '', parseFloat(precio), categoria, imagen || '', disponible !== undefined ? (disponible ? 1 : 0) : 1, req.params.id]
+      'UPDATE platillos SET nombre=$1, descripcion=$2, precio=$3, categoria=$4, imagen=$5, imagen_tipo=$6, disponible=$7 WHERE id=$8',
+      [nombre.trim(), descripcion || '', parseFloat(precio), categoria, imagen || '', tipoMedia(imagen_tipo), disponible !== undefined ? (disponible ? 1 : 0) : 1, req.params.id]
     );
 
     if (actual[0].imagen !== (imagen || '')) {

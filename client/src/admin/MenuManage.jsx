@@ -3,10 +3,11 @@ import axios from 'axios';
 import { Plus, Pencil, Trash2, ImageOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import ImageDropzone from '../components/ImageDropzone';
+import Media from '../components/Media';
 import { formatPrice } from '../utils/format';
 
 const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena', 'Postres', 'Bebidas'];
-const EMPTY_FORM = { nombre: '', descripcion: '', precio: '', categoria: 'Desayuno', imagen: '', disponible: 1 };
+const EMPTY_FORM = { nombre: '', descripcion: '', precio: '', categoria: 'Desayuno', imagen: '', imagen_tipo: 'imagen', disponible: 1 };
 
 // Evita que soltar un archivo fuera de la zona haga que el navegador lo abra.
 const blockFileDrop = (e) => {
@@ -46,6 +47,7 @@ export default function MenuManage() {
       precio: item.precio,
       categoria: item.categoria,
       imagen: item.imagen || '',
+      imagen_tipo: item.imagen_tipo || 'imagen',
       disponible: item.disponible,
     });
     setShowModal(true);
@@ -128,7 +130,7 @@ export default function MenuManage() {
               <tr key={item.id}>
                 <td>
                   {item.imagen ? (
-                    <img className="thumb" src={item.imagen} alt="" loading="lazy" />
+                    <Media className="thumb" src={item.imagen} tipo={item.imagen_tipo} />
                   ) : (
                     <div className="thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-lightest)' }}>
                       <ImageOff size={16} strokeWidth={1.5} />
@@ -178,8 +180,13 @@ export default function MenuManage() {
             <h2>{editing ? 'Editar Platillo' : 'Nuevo Platillo'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Imagen (opcional)</label>
-                <ImageDropzone value={form.imagen} onChange={imagen => setForm(f => ({ ...f, imagen }))} />
+                <label>Foto o video (opcional)</label>
+                <ImageDropzone
+                  allowVideo
+                  value={form.imagen}
+                  tipo={form.imagen_tipo}
+                  onChange={(imagen, tipo) => setForm(f => ({ ...f, imagen, imagen_tipo: tipo || 'imagen' }))}
+                />
               </div>
               <div className="form-group">
                 <label>Nombre</label>

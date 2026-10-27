@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import Media from '../components/Media';
 import { addDays, weekStartISO, weekDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
 
 export default function Noches() {
@@ -31,7 +32,7 @@ export default function Noches() {
           <div className="noches-list">
             {weekDays(desde).map(fecha => {
               const dia = dias[fecha];
-              const vacia = !dia || (!dia.evento && !dia.cantante && !dia.promo_titulo);
+              const vacia = !dia || (!dia.evento && !dia.cantante && !dia.promo_titulo && !dia.media);
               const clases = ['noche', fecha === hoy && 'hoy', vacia && 'vacia'].filter(Boolean).join(' ');
               return (
                 <div key={fecha} className={clases}>
@@ -56,10 +57,21 @@ export default function Noches() {
                           <div className="noche-dato">
                             <span className="noche-etiqueta">Cantante</span>
                             <div className="noche-cantante">
-                              {dia.cantante_foto && <img src={dia.cantante_foto} alt="" loading="lazy" />}
+                              {dia.cantante_foto && dia.cantante_foto_tipo !== 'video' && <img src={dia.cantante_foto} alt="" loading="lazy" />}
                               <p>{dia.cantante}</p>
                             </div>
+                            {dia.cantante_foto && dia.cantante_foto_tipo === 'video' && (
+                              <video className="noche-video" src={dia.cantante_foto} controls playsInline preload="metadata" />
+                            )}
                           </div>
+                        )}
+                        {dia.media && (
+                          <Media
+                            className="noche-video"
+                            src={dia.media}
+                            tipo={dia.media_tipo}
+                            video={{ controls: true, muted: false }}
+                          />
                         )}
                       </div>
 

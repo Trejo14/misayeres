@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Pencil, Trash2, ImageOff } from 'lucide-react';
 import ImageDropzone from '../components/ImageDropzone';
+import Media from '../components/Media';
 import { formatDate } from '../utils/format';
 
 const MAX_DESCRIPCION = 400;
-const EMPTY_FORM = { titulo: '', descripcion: '', fecha: '', imagen: '', activa: 1 };
+const EMPTY_FORM = { titulo: '', descripcion: '', fecha: '', imagen: '', imagen_tipo: 'imagen', activa: 1 };
 
 // Evita que soltar un archivo fuera de la zona haga que el navegador lo abra.
 const blockFileDrop = (e) => {
@@ -40,6 +41,7 @@ export default function EventosManage() {
       descripcion: item.descripcion || '',
       fecha: item.fecha || '',
       imagen: item.imagen || '',
+      imagen_tipo: item.imagen_tipo || 'imagen',
       activa: item.activa,
     });
     setShowModal(true);
@@ -99,7 +101,7 @@ export default function EventosManage() {
         <table className="admin-table">
           <thead>
             <tr>
-              <th style={{ width: '60px' }}>Imagen</th>
+              <th style={{ width: '60px' }}>Archivo</th>
               <th>Titulo</th>
               <th>Descripcion</th>
               <th>Fecha</th>
@@ -112,7 +114,7 @@ export default function EventosManage() {
               <tr key={item.id}>
                 <td>
                   {item.imagen ? (
-                    <img className="thumb" src={item.imagen} alt="" loading="lazy" />
+                    <Media className="thumb" src={item.imagen} tipo={item.imagen_tipo} />
                   ) : (
                     <div className="thumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-lightest)' }}>
                       <ImageOff size={18} strokeWidth={1.5} />
@@ -158,8 +160,13 @@ export default function EventosManage() {
             <h2>{editing ? 'Editar Evento' : 'Nuevo Evento'}</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Imagen (opcional)</label>
-                <ImageDropzone value={form.imagen} onChange={imagen => setForm(f => ({ ...f, imagen }))} />
+                <label>Foto o video (opcional)</label>
+                <ImageDropzone
+                  allowVideo
+                  value={form.imagen}
+                  tipo={form.imagen_tipo}
+                  onChange={(imagen, tipo) => setForm(f => ({ ...f, imagen, imagen_tipo: tipo || 'imagen' }))}
+                />
               </div>
               <div className="form-group">
                 <label>Titulo</label>

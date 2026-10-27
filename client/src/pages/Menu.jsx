@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Carousel from '../components/Carousel';
+import Media from '../components/Media';
 
 const DAY_CATS = ['Desayuno', 'Almuerzo'];
 const NIGHT_CATS = ['Comida', 'Cena'];
@@ -112,10 +113,11 @@ export default function Menu() {
             {items.map(item => (
               <div key={item.id} className="card menu-card" style={{ borderColor: colors.cardBorder }}>
                 {item.imagen ? (
-                  <img
+                  <Media
                     src={item.imagen}
+                    tipo={item.imagen_tipo}
                     alt={item.nombre}
-                    loading="lazy"
+                    video={{ autoPlay: true, loop: true }}
                     className="menu-card-media"
                   />
                 ) : (
