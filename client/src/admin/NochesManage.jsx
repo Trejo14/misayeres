@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ChevronLeft, ChevronRight, Copy, Pencil, Plus, Trash2, User } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Copy, Images, Pencil, Plus, Trash2, User } from 'lucide-react';
 import ImageDropzone from '../components/ImageDropzone';
+import RecuerdosManage from './RecuerdosManage';
 import Media from '../components/Media';
 import { addDays, nochesWeekStartISO, nochesDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
 
@@ -14,6 +15,7 @@ const blockFileDrop = (e) => {
 };
 
 export default function NochesManage() {
+  const [tab, setTab] = useState('programa');
   const semanaActual = nochesWeekStartISO();
   const [desde, setDesde] = useState(semanaActual);
   const [dias, setDias] = useState({});
@@ -142,10 +144,33 @@ export default function NochesManage() {
     </div>
   );
 
+  const tabs = (
+    <div className="tabs" role="tablist">
+      <button type="button" role="tab" aria-selected={tab === 'programa'} className={tab === 'programa' ? 'active' : ''} onClick={() => setTab('programa')}>
+        <CalendarDays size={15} strokeWidth={1.5} /> Programa
+      </button>
+      <button type="button" role="tab" aria-selected={tab === 'recuerdos'} className={tab === 'recuerdos' ? 'active' : ''} onClick={() => setTab('recuerdos')}>
+        <Images size={15} strokeWidth={1.5} /> Nuestros recuerdos
+      </button>
+    </div>
+  );
+
+  if (tab === 'recuerdos') {
+    return (
+      <div>
+        <div className="admin-header" style={{ marginBottom: '16px' }}><h1>Noches Mis Ayeres</h1></div>
+        {tabs}
+        <RecuerdosManage />
+      </div>
+    );
+  }
+
   return (
     <div>
-      <div className="admin-header">
-        <h1>Noches Mis Ayeres</h1>
+      <div className="admin-header" style={{ marginBottom: '16px' }}><h1>Noches Mis Ayeres</h1></div>
+      {tabs}
+      <div className="admin-header" style={{ marginBottom: '16px' }}>
+        <h1 style={{ fontSize: '1.3rem' }}>Programa de la semana</h1>
         <div className="week-nav">
           <button className="btn btn-sm btn-outline" onClick={() => setDesde(addDays(desde, -7))} aria-label="Semana anterior">
             <ChevronLeft size={14} strokeWidth={1.5} />

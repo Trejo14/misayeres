@@ -1636,3 +1636,281 @@ img.menu-card-media, video.menu-card-media {
 }
 
 .evento-popup-nav button:hover { background: rgba(255,255,255,0.12); }
+
+/* Pestañas del panel (Noches Mis Ayeres, Mesas) */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  color: var(--text-light);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tabs button:hover { color: var(--text); }
+.tabs button.active { color: var(--text); border-bottom-color: var(--text); }
+
+.tab-contador {
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: var(--bg-alt);
+  font-size: 12px;
+}
+
+/* Pestañas y galeria de recuerdos en la pagina publica de Noches */
+.noches-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto 28px;
+  flex-wrap: wrap;
+}
+
+.noches-tabs button {
+  padding: 9px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+}
+
+.noches-tabs button:hover { background: rgba(255,255,255,0.08); }
+.noches-tabs button.active { background: var(--white); color: var(--text); border-color: var(--white); }
+
+.recuerdos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.recuerdo {
+  margin: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.04);
+  overflow: hidden;
+}
+
+.recuerdo-media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  background: #000;
+}
+
+.recuerdo figcaption { padding: 14px 16px 16px; }
+.recuerdo figcaption strong { display: block; font-size: 1.05rem; margin-bottom: 4px; }
+.recuerdo figcaption p { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.75); }
+.recuerdo figcaption small { display: block; margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.45); }
+
+/* Control de mesas */
+.en-vivo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.en-vivo-punto {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--text-lightest);
+}
+
+.en-vivo.si .en-vivo-punto {
+  background: var(--verde);
+  box-shadow: 0 0 0 0 rgba(110,123,50,0.5);
+  animation: en-vivo-pulso 2s infinite;
+}
+
+@keyframes en-vivo-pulso {
+  70% { box-shadow: 0 0 0 8px rgba(110,123,50,0); }
+  100% { box-shadow: 0 0 0 0 rgba(110,123,50,0); }
+}
+
+.mesas-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.mesas-resumen > div {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+}
+
+.mesas-resumen strong { display: block; font-size: 1.5rem; font-weight: 600; }
+.mesas-resumen span { font-size: 12px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+
+.mesas-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.mesas-card { overflow-x: auto; }
+
+.mesas-plano {
+  display: grid;
+  margin: 0 auto;
+  min-width: 0;
+}
+
+.mesa,
+.mesa-hueco {
+  position: relative;
+  aspect-ratio: 1;
+  min-width: 56px;
+}
+
+.mesa {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* La mesa ocupa el centro de la casilla; la franja de alrededor es para las sillas.
+   Las casillas no tienen espacio entre si, asi que dos mesas unidas se tocan. */
+.mesa-tabla {
+  position: absolute;
+  inset: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border: 2px solid var(--verde);
+  border-radius: 8px;
+  background: #f1f4e6;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.mesa-tabla strong { font-size: 15px; line-height: 1.1; }
+.mesa-tabla small {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+.mesa:hover .mesa-tabla,
+.mesa:focus-visible .mesa-tabla { box-shadow: 0 0 0 3px rgba(0,0,0,0.12); }
+
+.mesa-reservada .mesa-tabla { border-color: var(--amarillo); background: #fcf3dd; }
+.mesa-ocupada .mesa-tabla { border-color: var(--rojo); background: #f8e6e5; }
+
+.une-arr .mesa-tabla { top: 0; border-top-left-radius: 0; border-top-right-radius: 0; border-top-style: dashed; }
+.une-abj .mesa-tabla { bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom-style: dashed; }
+.une-izq .mesa-tabla { left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0; border-left-style: dashed; }
+.une-der .mesa-tabla { right: 0; border-top-right-radius: 0; border-bottom-right-radius: 0; border-right-style: dashed; }
+
+.silla {
+  position: absolute;
+  border-radius: 4px;
+  background: #fff;
+  border: 1.5px solid var(--text-lightest);
+}
+
+.silla-arr, .silla-abj { left: 36%; right: 36%; height: 11%; }
+.silla-izq, .silla-der { top: 36%; bottom: 36%; width: 11%; }
+.silla-arr { top: 5%; }
+.silla-abj { bottom: 5%; }
+.silla-izq { left: 5%; }
+.silla-der { right: 5%; }
+.silla.llena { background: var(--rojo); border-color: var(--rojo); }
+.mesa-reservada .silla { border-color: var(--amarillo); }
+
+.mesa.seleccionada .mesa-tabla { box-shadow: 0 0 0 3px var(--text); }
+.mesa.sugerida .mesa-tabla { outline: 2px dashed var(--text); outline-offset: 3px; }
+
+.mesas-leyenda {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.mesas-leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+.mesas-leyenda i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 2px solid; }
+.ley-libre { border-color: var(--verde) !important; background: #f1f4e6; }
+.ley-reservada { border-color: var(--amarillo) !important; background: #fcf3dd; }
+.ley-ocupada { border-color: var(--rojo) !important; background: #f8e6e5; }
+.ley-silla { width: 14px !important; height: 7px !important; border-color: var(--rojo) !important; background: var(--rojo); }
+
+.segmentado {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.segmentado button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: var(--white);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.segmentado button + button { border-left: 1px solid var(--border); }
+.segmentado .seg-libre.active { background: var(--verde); color: #fff; }
+.segmentado .seg-reservada.active { background: var(--amarillo); color: var(--text); }
+.segmentado .seg-ocupada.active { background: var(--rojo); color: #fff; }
+
+.contador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group .contador input {
+  width: 70px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .mesa-tabla strong { font-size: 12px; }
+  .mesa-tabla small { font-size: 9px; }
+}

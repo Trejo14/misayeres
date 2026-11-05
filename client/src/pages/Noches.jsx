@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Media from '../components/Media';
+import { formatDate } from '../utils/format';
 import { addDays, nochesWeekStartISO, nochesDays, todayISO, formatWeekday, formatDayMonth } from '../utils/format';
 
 export default function Noches() {
@@ -9,6 +11,19 @@ export default function Noches() {
   const hoy = todayISO();
   const [dias, setDias] = useState({});
   const [loading, setLoading] = useState(true);
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') === 'recuerdos' ? 'recuerdos' : 'programa';
+  const [recuerdos, setRecuerdos] = useState(null);
+
+  // Los recuerdos se cargan solo la primera vez que se abre su pestaña.
+  useEffect(() => {
+    if (tab !== 'recuerdos' || recuerdos) return;
+    axios.get('/api/recuerdos')
+      .then(res => setRecuerdos(res.data))
+      .catch(() => setRecuerdos([]));
+  }, [tab, recuerdos]);
+
+  const cambiarTab = (nuevo) => setParams(nuevo === 'recuerdos' ? { tab: 'recuerdos' } : {}, { replace: true });
 
   useEffect(() => {
     axios.get('/api/noches', { params: { desde } })
@@ -22,6 +37,48 @@ export default function Noches() {
       <div className="container">
         <h2 className="section-title">Noches Mis Ayeres</h2>
         <div className="divider" />
+
+        <div className="noches-tabs" role="tablist">
+          <button type="button" role="tab" aria-selected={tab === 'programa'} className={tab === 'programa' ? 'active' : ''} onClick={() => cambiarTab('programa')}>
+            Programa
+          </button>
+          <button type="button" role="tab" aria-selected={tab === 'recuerdos'} className={tab === 'recuerdos' ? 'active' : ''} onClick={() => cambiarTab('recuerdos')}>
+            Nuestros recuerdos
+          </button>
+        </div>
+
+        {tab === 'recuerdos' ? (
+          <>
+            <p className="section-subtitle">Lo que hemos vivido juntos en Noches Mis Ayeres.</p>
+            {!recuerdos ? (
+              <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.6)' }}>Cargando recuerdos...</p>
+            ) : recuerdos.length === 0 ? (
+              <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>Muy pronto compartiremos aqui nuestros recuerdos.</p>
+            ) : (
+              <div className="recuerdos-grid">
+                {recuerdos.map(item => (
+                  <figure key={item.id} className="recuerdo">
+                    <Media
+                      className="recuerdo-media"
+                      src={item.media}
+                      tipo={item.media_tipo}
+                      alt={item.titulo || 'Recuerdo de Noches Mis Ayeres'}
+                      video={{ controls: true, muted: false }}
+                    />
+                    {(item.titulo || item.descripcion) && (
+                      <figcaption>
+                        {item.titulo && <strong>{item.titulo}</strong>}
+                        {item.descripcion && <p>{item.descripcion}</p>}
+                        <small>{formatDate(item.created_at)}</small>
+                      </figcaption>
+                    )}
+                  </figure>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+        <>
         <p className="section-subtitle">
           Programa de martes {formatDayMonth(addDays(desde, 1))} a sabado {formatDayMonth(addDays(desde, 5))}.
         </p>
@@ -99,6 +156,8 @@ export default function Noches() {
               );
             })}
           </div>
+        )}
+        </>
         )}
       </div>
     </section>

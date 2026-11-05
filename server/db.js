@@ -176,6 +176,46 @@ export async function initDB() {
     await client.query('ALTER TABLE noches ADD COLUMN IF NOT EXISTS media TEXT');
     await client.query("ALTER TABLE noches ADD COLUMN IF NOT EXISTS media_tipo TEXT NOT NULL DEFAULT 'imagen'");
 
+    // Recuerdos de Noches Mis Ayeres: galeria de fotos y videos con descripcion corta.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS recuerdos (
+        id SERIAL PRIMARY KEY,
+        titulo TEXT,
+        descripcion TEXT,
+        media TEXT NOT NULL,
+        media_tipo TEXT NOT NULL DEFAULT 'imagen' CHECK(media_tipo IN ('imagen', 'video')),
+        activa INTEGER DEFAULT 1,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Mesas del restaurante. `pos` es la casilla en la cuadricula de su zona
+    // (fila = pos / columnas). Las mesas unidas comparten `grupo`, que es el id
+    // de la mesa principal; el estado se guarda igual en todas las del grupo y
+    // las personas solo en la principal.
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS mesas (
+        id SERIAL PRIMARY KEY,
+        zona TEXT NOT NULL CHECK(zona IN ('piso', 'terraza')),
+        pos INTEGER NOT NULL,
+        extra BOOLEAN NOT NULL DEFAULT false,
+        grupo INTEGER,
+        estado TEXT NOT NULL DEFAULT 'libre' CHECK(estado IN ('libre', 'reservada', 'ocupada')),
+        personas INTEGER NOT NULL DEFAULT 0,
+        nota TEXT NOT NULL DEFAULT '',
+        desde TIMESTAMPTZ,
+        UNIQUE (zona, pos)
+      )
+    `);
+    // Mesas base: 9 en piso y 20 en terraza.
+    await client.query(`
+      INSERT INTO mesas (zona, pos)
+      SELECT 'piso', g FROM generate_series(0, 8) g
+      UNION ALL
+      SELECT 'terraza', g FROM generate_series(0, 19) g
+      ON CONFLICT (zona, pos) DO NOTHING
+    `);
+
     // Migraciones de quejas: cualquier usuario puede enviarlas, de forma anonima
     // (sin reportero) y sin que sean necesariamente sobre un empleado concreto.
     await client.query('ALTER TABLE quejas ALTER COLUMN reportero_id DROP NOT NULL');

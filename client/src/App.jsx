@@ -17,6 +17,7 @@ import PromosManage from './admin/PromosManage';
 import EventosManage from './admin/EventosManage';
 import NochesManage from './admin/NochesManage';
 import ReservationsManage from './admin/ReservationsManage';
+import MesasManage from './admin/MesasManage';
 import ClientsManage from './admin/ClientsManage';
 import UsersManage from './admin/UsersManage';
 import ComplaintsManage from './admin/ComplaintsManage';
@@ -41,6 +42,7 @@ export default function App() {
           <Route path="promos" element={<ProtectedRoute roles={STAFF}><PromosManage /></ProtectedRoute>} />
           <Route path="eventos" element={<ProtectedRoute roles={STAFF}><EventosManage /></ProtectedRoute>} />
           <Route path="noches" element={<ProtectedRoute roles={STAFF}><NochesManage /></ProtectedRoute>} />
+          <Route path="mesas" element={<MesasManage />} />
           <Route path="reservations" element={<ProtectedRoute roles={STAFF}><ReservationsManage /></ProtectedRoute>} />
           <Route path="clients" element={<ClientsManage />} />
           <Route path="users" element={<ProtectedRoute roles={OWNER}><UsersManage /></ProtectedRoute>} />

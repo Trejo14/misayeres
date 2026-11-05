@@ -16,6 +16,8 @@ import promosRoutes from './routes/promos.js';
 import nochesRoutes from './routes/noches.js';
 import cantantesRoutes from './routes/cantantes.js';
 import eventosRoutes from './routes/eventos.js';
+import recuerdosRoutes from './routes/recuerdos.js';
+import mesasRoutes from './routes/mesas.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,6 +41,8 @@ app.use('/api/promos', promosRoutes);
 app.use('/api/noches', nochesRoutes);
 app.use('/api/cantantes', cantantesRoutes);
 app.use('/api/eventos', eventosRoutes);
+app.use('/api/recuerdos', recuerdosRoutes);
+app.use('/api/mesas', mesasRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
