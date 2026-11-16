@@ -176,6 +176,30 @@ export async function initDB() {
     await client.query('ALTER TABLE noches ADD COLUMN IF NOT EXISTS media TEXT');
     await client.query("ALTER TABLE noches ADD COLUMN IF NOT EXISTS media_tipo TEXT NOT NULL DEFAULT 'imagen'");
 
+    // Reclasificacion del menu a las nuevas categorias. Solo toca platillos que
+    // aun tienen una categoria vieja, asi que no se repite ni borra nada.
+    const VIEJAS = ['Desayuno', 'Almuerzo', 'Comida', 'Cena'];
+    const reclasificar = {
+      'Entradas': [31],
+      'Desayunos': [13, 35, 36, 41, 44],
+      'Ensaladas': [39, 43],
+      'Sopas': [32, 33, 34],
+      'Pastas': [42],
+      'Fuertes': [4, 8, 9, 29, 38, 40],
+      'Hamburguesas y hot dog': [10],
+      'Para botanear': [11, 12, 14],
+      'Combos': [27, 28, 30],
+    };
+    for (const [categoria, ids] of Object.entries(reclasificar)) {
+      await client.query(
+        'UPDATE platillos SET categoria = $1 WHERE id = ANY($2::int[]) AND categoria = ANY($3::text[])',
+        [categoria, ids, VIEJAS]
+      );
+    }
+    // Cualquier otro platillo con categoria vieja (por ejemplo, uno oculto).
+    await client.query("UPDATE platillos SET categoria = 'Desayunos' WHERE categoria IN ('Desayuno', 'Almuerzo')");
+    await client.query("UPDATE platillos SET categoria = 'Fuertes' WHERE categoria IN ('Comida', 'Cena')");
+
     // Recuerdos de Noches Mis Ayeres: galeria de fotos y videos con descripcion corta.
     await client.query(`
       CREATE TABLE IF NOT EXISTS recuerdos (

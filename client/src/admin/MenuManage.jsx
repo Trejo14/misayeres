@@ -5,9 +5,10 @@ import { useAuth } from '../context/AuthContext';
 import ImageDropzone from '../components/ImageDropzone';
 import Media from '../components/Media';
 import { formatPrice } from '../utils/format';
+import { CATEGORIAS } from '../utils/categorias';
 
-const CATEGORIES = ['Desayuno', 'Almuerzo', 'Comida', 'Cena', 'Postres', 'Bebidas'];
-const EMPTY_FORM = { nombre: '', descripcion: '', precio: '', categoria: 'Desayuno', imagen: '', imagen_tipo: 'imagen', disponible: 1 };
+const CATEGORIES = CATEGORIAS;
+const EMPTY_FORM = { nombre: '', descripcion: '', precio: '', categoria: 'Entradas', imagen: '', imagen_tipo: 'imagen', disponible: 1 };
 
 // Evita que soltar un archivo fuera de la zona haga que el navegador lo abra.
 const blockFileDrop = (e) => {

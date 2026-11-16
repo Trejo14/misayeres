@@ -3,53 +3,42 @@ import axios from 'axios';
 import Carousel from '../components/Carousel';
 import Media from '../components/Media';
 
-const DAY_CATS = ['Desayuno', 'Almuerzo'];
-const NIGHT_CATS = ['Comida', 'Cena'];
-const DESSERT_CATS = ['Postres'];
-const DRINK_CATS = ['Bebidas'];
+import { CATEGORIAS } from '../utils/categorias';
 
-const DAY_COLORS = {
-  bg: 'linear-gradient(135deg, #fff8e1, #ffecb3)',
-  headerBg: '#f9a825',
+const paleta = (bg1, bg2, headerBg, accent, cardBorder, tagBg, tagText, title) => ({
+  bg: `linear-gradient(135deg, ${bg1}, ${bg2})`,
+  headerBg,
   headerText: '#ffffff',
-  accent: '#f57f17',
-  cardBorder: '#ffe082',
-  tagBg: '#fff8e1',
-  tagText: '#f57f17',
-  title: '#e65100',
+  accent,
+  cardBorder,
+  tagBg,
+  tagText,
+  title,
+});
+
+const CLARO = {
+  ambar: paleta('#fff8e1', '#ffecb3', '#f9a825', '#f57f17', '#ffe082', '#fff8e1', '#f57f17', '#e65100'),
+  verde: paleta('#f1f8e9', '#dcedc8', '#558b2f', '#7cb342', '#c5e1a5', '#f1f8e9', '#33691e', '#33691e'),
+  terracota: paleta('#fbe9e7', '#ffccbc', '#bf360c', '#e64a19', '#ffab91', '#fbe9e7', '#bf360c', '#8d2c0b'),
+  rosa: paleta('#fce4ec', '#f8bbd0', '#ad1457', '#d81b60', '#f48fb1', '#fce4ec', '#ad1457', '#880e4f'),
+  cian: paleta('#e0f7fa', '#b2ebf2', '#00838f', '#00acc1', '#80deea', '#e0f7fa', '#00838f', '#006064'),
+  crema: paleta('#fdf6ec', '#f3e5d0', '#8d6e63', '#a1887f', '#d7ccc8', '#efebe9', '#5d4037', '#4e342e'),
 };
 
-const NIGHT_COLORS = {
-  bg: 'linear-gradient(135deg, #263238, #37474f)',
-  headerBg: '#263238',
-  headerText: '#ffffff',
-  accent: '#78909c',
-  cardBorder: '#455a64',
-  tagBg: '#37474f',
-  tagText: '#b0bec5',
-  title: '#eceff1',
-};
+const OSCURO = paleta('#263238', '#37474f', '#263238', '#78909c', '#455a64', '#37474f', '#b0bec5', '#eceff1');
 
-const DESSERT_COLORS = {
-  bg: 'linear-gradient(135deg, #fce4ec, #f8bbd0)',
-  headerBg: '#ad1457',
-  headerText: '#ffffff',
-  accent: '#d81b60',
-  cardBorder: '#f48fb1',
-  tagBg: '#fce4ec',
-  tagText: '#ad1457',
-  title: '#880e4f',
-};
-
-const DRINK_COLORS = {
-  bg: 'linear-gradient(135deg, #e0f7fa, #b2ebf2)',
-  headerBg: '#00838f',
-  headerText: '#ffffff',
-  accent: '#00acc1',
-  cardBorder: '#80deea',
-  tagBg: '#e0f7fa',
-  tagText: '#00838f',
-  title: '#006064',
+const SECCIONES = {
+  'Entradas': { subtitle: 'Para abrir el apetito mientras llega lo mejor.', colors: CLARO.terracota },
+  'Desayunos': { subtitle: 'El mejor inicio para su dia con ingredientes frescos y sabores unicos.', colors: CLARO.ambar },
+  'Ensaladas': { subtitle: 'Frescas, ligeras y llenas de sabor.', colors: CLARO.verde },
+  'Sopas': { subtitle: 'Caldos y sopas tradicionales que reconfortan.', colors: CLARO.terracota },
+  'Pastas': { subtitle: 'Pastas preparadas al momento con salsas de la casa.', colors: CLARO.crema },
+  'Fuertes': { subtitle: 'Una experiencia gastronomica completa para los momentos mas especiales.', colors: OSCURO },
+  'Hamburguesas y hot dog': { subtitle: 'Clasicos jugosos acompañados de papas.', colors: CLARO.ambar },
+  'Para botanear': { subtitle: 'Para compartir entre amigos y acompañar la bebida.', colors: CLARO.terracota },
+  'Combos': { subtitle: 'Combinaciones pensadas para disfrutar de todo un poco.', colors: OSCURO },
+  'Postres': { subtitle: 'Dulces tentaciones elaboradas al momento para cerrar con broche de oro.', colors: CLARO.rosa },
+  'Bebidas': { subtitle: 'Refrescos, cocteleria y bebidas artesanales para acompañar cada platillo.', colors: CLARO.cian },
 };
 
 export default function Menu() {
@@ -74,10 +63,13 @@ export default function Menu() {
     );
   }
 
-  const dayItems = items.filter(i => DAY_CATS.includes(i.categoria));
-  const nightItems = items.filter(i => NIGHT_CATS.includes(i.categoria));
-  const dessertItems = items.filter(i => DESSERT_CATS.includes(i.categoria));
-  const drinkItems = items.filter(i => DRINK_CATS.includes(i.categoria));
+  // Platillos con una categoria que ya no esta en la lista no se pierden:
+  // se muestran al final en "Otros".
+  const otros = items.filter(i => !CATEGORIAS.includes(i.categoria));
+  const secciones = [
+    ...CATEGORIAS.map(cat => ({ title: cat, ...SECCIONES[cat], items: items.filter(i => i.categoria === cat) })),
+    { title: 'Otros', subtitle: 'Mas opciones de nuestra cocina.', colors: CLARO.crema, items: otros },
+  ].filter(sec => sec.items.length > 0);
 
   const renderSection = (title, subtitle, items, colors) => (
     <div style={{
@@ -169,33 +161,11 @@ export default function Menu() {
         </div>
       </div>
 
-      {renderSection(
-        'Desayuno / Almuerzo',
-        'El mejor inicio para su dia con ingredientes frescos y sabores unicos.',
-        dayItems,
-        DAY_COLORS
-      )}
-
-      {renderSection(
-        'Comida / Cena',
-        'Una experiencia gastronomica completa para los momentos mas especiales.',
-        nightItems,
-        NIGHT_COLORS
-      )}
-
-      {renderSection(
-        'Postres',
-        'Dulces tentaciones elaboradas al momento para cerrar con broche de oro.',
-        dessertItems,
-        DESSERT_COLORS
-      )}
-
-      {renderSection(
-        'Bebidas',
-        'Refrescos, coctelería y bebidas artesanales para acompañar cada platillo.',
-        drinkItems,
-        DRINK_COLORS
-      )}
+      {secciones.map(sec => (
+        <div key={sec.title}>
+          {renderSection(sec.title, sec.subtitle, sec.items, sec.colors)}
+        </div>
+      ))}
     </section>
   );
 }
