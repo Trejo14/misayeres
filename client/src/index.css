@@ -236,6 +236,8 @@ img { max-width: 100%; }
   width: 100%;
   aspect-ratio: 2000 / 1493;
   object-fit: cover;
+  /* La foto es vertical (1200x1600): encuadra el letrero y el balcon */
+  object-position: center 40%;
   border: 6px solid var(--gold);
   border-radius: 4px;
   box-shadow: 0 24px 60px rgba(0,0,0,0.5);
